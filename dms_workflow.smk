@@ -1,5 +1,6 @@
 # **** Variables ****
-configfile: "config/prywes_dms.yaml"
+# configfile: "config/prywes_dms.yaml"
+configfile: "config/prywes_pgym_dms.yaml"
 
 # **** Imports ****
 import glob
@@ -19,7 +20,9 @@ rule all:
 # noinspection SmkAvoidTabWhitespace
 rule convert_enrichment:
 	input:
-		dms_data = lambda wildcards: glob.glob("{in_dir}/dms_data.csv".format(in_dir=config['input_dir']))
+		dms_data = lambda wildcards: glob.glob("{in_dir}/{experiment_id}.csv".format(
+			in_dir=config['input_dir'],
+			experiment_id=config["reference_seq"]))
 	output:
 		dms_prefs = "{run}_{min_ident}/{experiment_id}/processed_inputs/aa_preference.csv"
 	params:
@@ -28,6 +31,11 @@ rule convert_enrichment:
 		aminoacid_col = config["aminoacid_col"]
 	conda:
 		"envs/dms.yaml"
+	message:
+		"""
+		Convert DMS scores in:\n {input.dms_data}
+		To AA Preferences in:\n {output.dms_prefs}
+		"""
 	script:
 		"py/enrichm2aa-preference.py"
 
@@ -65,7 +73,8 @@ rule seq_alignment:
 		msa = "{run}_{min_ident}/{experiment_id}/processed_inputs/nt_alignment_msa.fna"
 	params:
 		reference_seq = lambda wildcards: config["reference_seq"][wildcards.experiment_id],
-		impute_ref = config["reference_fasta"],
+		impute_ref = lambda wildcards: glob.glob("{in_dir}/fasta/{reference_seq}.fasta".format(in_dir=config['input_dir'],
+			reference_seq=config["reference_seq"][wildcards.experiment_id])),
 		ref_imputed = "{run}_{min_ident}/{experiment_id}/processed_inputs/multi_fasta_ref_imputed.fna"
 	conda:
 		"envs/dms.yaml"

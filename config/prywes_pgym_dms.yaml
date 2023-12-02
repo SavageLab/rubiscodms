@@ -1,196 +1,106 @@
 # Folder where input data is stored
-input_dir: "/groups/doudna/projects/daniel_projects/prywes_n/input_data"
+input_dir: "/groups/doudna/projects/daniel_projects/prywes_n/pgym_input_data"
 
 threads: 20
 
 # File directory where files will be stored in
 run: "/groups/doudna/projects/daniel_projects/prywes_n/proteingym_dms"
 
-min_ident: '0.75'
-site_offset: '3'
+min_ident: '0.70'
+site_offset: '0'
 
 reference_seq:
-  'A0A140D2T1_ZIKV_Sourisseau_growth_2019': 'A0A140D2T1_ZIKV',
-  'A0A192B1T2_9HIV1_Haddox_2018': 'A0A192B1T2_9HIV1',
-  'A0A1I9GEU1_NEIME_Kennouche_2019': 'A0A1I9GEU1_NEIME',
-  'A0A2Z5U3Z0_9INFA_Doud_2016': 'A0A2Z5U3Z0_9INFA',
-  'A0A2Z5U3Z0_9INFA_Wu_2014': 'A0A2Z5U3Z0_9INFA',
-  'A4_HUMAN_Seuma_2021': 'A4_HUMAN',
-  'A4D664_9INFA_Soh_CCL141_2019': 'A4D664_9INFA',
-  'A4GRB6_PSEAI_Chen_2020': 'A4GRB6_PSEAI',
-  'AACC1_PSEAI_Dandage_2018': 'AACC1_PSEAI',
-  'ADRB2_HUMAN_Jones_2020': 'ADRB2_HUMAN',
-  'AMIE_PSEAE_Wrenbeck_2017': 'AMIE_PSEAE',
-  'B3VI55_LIPST_Klesmith_2015': 'LGK_LIPST',
-  'BLAT_ECOLX_Deng_2012': 'BLAT_ECOLX',
-  'BLAT_ECOLX_Firnberg_2014': 'BLAT_ECOLX',
-  'BLAT_ECOLX_Jacquier_2013': 'BLAT_ECOLX',
-  'BLAT_ECOLX_Stiffler_2015': 'BLAT_ECOLX',
-  'BRCA1_HUMAN_Findlay_2018': 'BRCA1_HUMAN',
-  'C6KNH7_9INFA_Lee_2018': 'C6KNH7_9INFA',
-  'CALM1_HUMAN_Weile_2017': 'CALM1_HUMAN',
-  'CAPSD_AAV2S_Sinai_substitutions_2021': 'CAPSD_AAV2S',
-  'CCDB_ECOLI_Adkar_2012': 'CCDB_ECOLI',
-  'CCDB_ECOLI_Tripathi_2016': 'CCDB_ECOLI',
-  'CP2C9_HUMAN_Amorosi_abundance_2021': 'CP2C9_HUMAN',
-  'CP2C9_HUMAN_Amorosi_activity_2021': 'CP2C9_HUMAN',
-  'DLG4_HUMAN_Faure_2021': 'DLG4_HUMAN',
-  'DLG4_RAT_McLaughlin_2012': 'DLG4_RAT',
-  'DYR_ECOLI_Thompson_plusLon_2019': 'DYR_ECOLI',
-  'ENV_HV1B9_DuenasDecamp_2016': 'ENV_HV1B9',
-  'ENV_HV1BR_Haddox_2016': 'ENV_HV1BR',
-  'ESTA_BACSU_Nutschel_2020': 'ESTA_BACSU',
-  'F7YBW8_MESOW_Aakre_2015': 'F7YBW8_MESOW',
-  'GAL4_YEAST_Kitzman_2015': 'GAL4_YEAST',
-  'GCN4_YEAST_Staller_induction_2018': 'GCN4_YEAST',
-  'GFP_AEQVI_Sarkisyan_2016': 'GFP_AEQVI',
-  'GRB2_HUMAN_Faure_2021': 'GRB2_HUMAN',
-  'HIS7_YEAST_Pokusaeva_2019': 'HIS7_YEAST',
-  'HSP82_YEAST_Flynn_2019': 'HSP82_YEAST',
-  'HSP82_YEAST_Mishra_2016': 'HSP82_YEAST',
-  'I6TAH8_I68A0_Doud_2015': 'I6TAH8_I68A0',
-  'IF1_ECOLI_Kelsic_2016': 'IF1_ECOLI',
-  'KCNH2_HUMAN_Kozek_2020': 'KCNH2_HUMAN',
-  'KKA2_KLEPN_Melnikov_2014': 'KKA2_KLEPN',
-  'MK01_HUMAN_Brenan_2016': 'MK01_HUMAN',
-  'MSH2_HUMAN_Jia_2020': 'MSH2_HUMAN',
-  'MTH3_HAEAE_Rockah-Shmuel_2015': 'MTH3_HAEAE',
-  'NCAP_I34A1_Doud_2015': 'NCAP_I34A1',
-  'NRAM_I33A0_Jiang_standard_2016': 'NRAM_I33A0',
-  'NUD15_HUMAN_Suiter_2020': 'NUD15_HUMAN',
-  'P53_HUMAN_Giacomelli_NULL_Etoposide_2018': 'P53_HUMAN',
-  'P53_HUMAN_Giacomelli_NULL_Nutlin_2018': 'P53_HUMAN',
-  'P53_HUMAN_Giacomelli_WT_Nutlin_2018': 'P53_HUMAN',
-  'P53_HUMAN_Kotler_2018': 'P53_HUMAN',
-  'P84126_THETH_Chan_2017': 'P84126_THETH',
-  'PA_I34A1_Wu_2015': 'PA_I34A1',
-  'PABP_YEAST_Melamed_2013': 'PABP_YEAST',
-  'POLG_CXB3N_Mattenberger_2021': 'POLG_CXB3N',
-  'POLG_HCVJF_Qi_2014': 'POLG_HCVJF',
-  'PTEN_HUMAN_Matreyek_2021': 'PTEN_HUMAN',
-  'PTEN_HUMAN_Mighell_2018': 'PTEN_HUMAN',
-  'Q2N0S5_9HIV1_Haddox_2018': 'Q2N0S5_9HIV1',
-  'Q59976_STRSQ_Romero_2015': 'Q59976_STRSQ',
-  'R1AB_SARS2_Flynn_growth_2022': 'R1AB_SARS2',
-  'RASH_HUMAN_Bandaru_2017': 'RASH_HUMAN',
-  'REV_HV1H2_Fernandes_2016': 'REV_HV1H2',
-  'RL401_YEAST_Mavor_2016': 'RL40A_YEAST',
-  'RL401_YEAST_Roscoe_2013': 'RL40A_YEAST',
-  'RL401_YEAST_Roscoe_2014': 'RL40A_YEAST',
-  'SC6A4_HUMAN_Young_2021': 'SC6A4_HUMAN',
-  'SCN5A_HUMAN_Glazer_2019': 'SCN5A_HUMAN',
-  'SPG1_STRSG_Olson_2014': 'SPG1_STRSG',
-  'SPIKE_SARS2_Starr_bind_2020': 'SPIKE_SARS2',
-  'SPIKE_SARS2_Starr_expr_2020': 'SPIKE_SARS2',
-  'SRC_HUMAN_Ahler_CD_2019': 'SRC_HUMAN',
-  'SUMO1_HUMAN_Weile_2017': 'SUMO1_HUMAN',
-  'SYUA_HUMAN_Newberry_2020': 'SYUA_HUMAN',
-  'TADBP_HUMAN_Bolognesi_2019': 'TADBP_HUMAN',
-  'TAT_HV1BR_Fernandes_2016': 'TAT_HV1BR',
-  'TPK1_HUMAN_Weile_2017': 'TPK1_HUMAN',
-  'TPMT_HUMAN_Matreyek_2018': 'TPMT_HUMAN',
-  'TPOR_HUMAN_Bridgford_S505N_2020': 'TPOR_HUMAN',
-  'TRPC_SACS2_Chan_2017': 'TRPC_SACS2',
-  'TRPC_THEMA_Chan_2017': 'TRPC_THEMA',
-  'UBC9_HUMAN_Weile_2017': 'UBC9_HUMAN',
-  'UBE4B_MOUSE_Starita_2013': 'UBE4B_MOUSE',
-  'VKOR1_HUMAN_Chiasson_abundance_2020': 'VKOR1_HUMAN',
-  'VKOR1_HUMAN_Chiasson_activity_2020': 'VKOR1_HUMAN',
-  'YAP1_HUMAN_Araya_2012': 'YAP1_HUMAN',
-
-msa_path:
-  'A0A140D2T1_ZIKV_Sourisseau_growth_2019': 'A0A140D2T1_ZIKV_theta0.99_281-804_11-26-2021_b02.a2m',
-  'A0A192B1T2_9HIV1_Haddox_2018': 'A0A192B1T2_9HIV1_theta0.99_full_11-26-2021_b09.a2m',
-  'A0A1I9GEU1_NEIME_Kennouche_2019': 'A0A1I9GEU1_NEIME_full_11-26-2021_b08.a2m',
-  'A0A2Z5U3Z0_9INFA_Doud_2016': 'A0A2Z5U3Z0_9INFA_theta0.99_full_11-26-2021_b09.a2m',
-  'A0A2Z5U3Z0_9INFA_Wu_2014': 'A0A2Z5U3Z0_9INFA_theta0.99_full_11-26-2021_b09.a2m',
-  'A4_HUMAN_Seuma_2021': 'A4_HUMAN_full_11-26-2021_b01.a2m',
-  'A4D664_9INFA_Soh_CCL141_2019': 'A4D664_9INFA_theta0.99_full_11-26-2021_b09.a2m',
-  'A4GRB6_PSEAI_Chen_2020': 'A4GRB6_PSEAI_full_11-26-2021_b03.a2m',
-  'AACC1_PSEAI_Dandage_2018': 'AACC1_PSEAI_full_04-29-2022_b03.a2m',
-  'ADRB2_HUMAN_Jones_2020': 'ADRB2_HUMAN_full_11-26-2021_b03.a2m',
-  'AMIE_PSEAE_Wrenbeck_2017': 'AMIE_PSEAE_full_11-26-2021_b02.a2m',
-  'B3VI55_LIPST_Klesmith_2015': 'B3VI55_LIPST_full_11-26-2021_b03.a2m',
-  'BLAT_ECOLX_Deng_2012': 'BLAT_ECOLX_full_11-26-2021_b02.a2m',
-  'BLAT_ECOLX_Firnberg_2014': 'BLAT_ECOLX_full_11-26-2021_b02.a2m',
-  'BLAT_ECOLX_Jacquier_2013': 'BLAT_ECOLX_full_11-26-2021_b02.a2m',
-  'BLAT_ECOLX_Stiffler_2015': 'BLAT_ECOLX_full_11-26-2021_b02.a2m',
-  'BRCA1_HUMAN_Findlay_2018': 'BRCA1_HUMAN_full_11-26-2021_b02.a2m',
-  'C6KNH7_9INFA_Lee_2018': 'C6KNH7_9INFA_theta0.99_full_11-26-2021_b09.a2m',
-  'CALM1_HUMAN_Weile_2017': 'CALM1_HUMAN_full_11-26-2021_b03.a2m',
-  'CAPSD_AAV2S_Sinai_substitutions_2021': 'CAPSD_AAV2S_uniprot_t099_msc70_mcc70_b0.8.a2m',
-  'CCDB_ECOLI_Adkar_2012': 'CCDB_ECOLI_full_11-26-2021_b02.a2m',
-  'CCDB_ECOLI_Tripathi_2016': 'CCDB_ECOLI_full_11-26-2021_b02.a2m',
-  'CP2C9_HUMAN_Amorosi_abundance_2021': 'CP2C9_HUMAN_full_11-26-2021_b04.a2m',
-  'CP2C9_HUMAN_Amorosi_activity_2021': 'CP2C9_HUMAN_full_11-26-2021_b04.a2m',
-  'DLG4_HUMAN_Faure_2021': 'DLG4_HUMAN_full_11-26-2021_b02.a2m',
-  'DLG4_RAT_McLaughlin_2012': 'DLG4_RAT_full_11-26-2021_b03.a2m',
-  'DYR_ECOLI_Thompson_plusLon_2019': 'DYR_ECOLI_full_11-26-2021_b08.a2m',
-  'ENV_HV1B9_DuenasDecamp_2016': 'ENV_HV1B9_S364P-M373R_b0.3.a2m',
-  'ENV_HV1BR_Haddox_2016': 'ENV_HV1BR_theta0.99_full_11-26-2021_b09.a2m',
-  'ESTA_BACSU_Nutschel_2020': 'ESTA_BACSU_full_11-26-2021_b03.a2m',
-  'F7YBW8_MESOW_Aakre_2015': 'F7YBW8_MESOW_full_01-07-2022_b02.a2m',
-  'GAL4_YEAST_Kitzman_2015': 'GAL4_YEAST_full_11-26-2021_b02.a2m',
-  'GCN4_YEAST_Staller_induction_2018': 'GCN4_YEAST_full_24-02-2022_b03.a2m',
-  'GFP_AEQVI_Sarkisyan_2016': 'GFP_AEQVI_full_04-29-2022_b08.a2m',
-  'GRB2_HUMAN_Faure_2021': 'GRB2_HUMAN_full_11-26-2021_b05.a2m',
-  'HIS7_YEAST_Pokusaeva_2019': 'HIS7_YEAST_full_11-26-2021_b09.a2m',
-  'HSP82_YEAST_Flynn_2019': 'HSP82_YEAST_full_11-26-2021_b01.a2m',
-  'HSP82_YEAST_Mishra_2016': 'HSP82_YEAST_full_11-26-2021_b01.a2m',
-  'I6TAH8_I68A0_Doud_2015': 'I6TAH8_I68A0_theta0.99_full_11-26-2021_b09.a2m',
-  'IF1_ECOLI_Kelsic_2016': 'IF1_ECOLI_full_11-26-2021_b02.a2m',
-  'KCNH2_HUMAN_Kozek_2020': 'KCNH2_HUMAN_535-565_11-26-2021_b05.a2m',
-  'KKA2_KLEPN_Melnikov_2014': 'KKA2_KLEPN_full_11-26-2021_b02.a2m',
-  'MK01_HUMAN_Brenan_2016': 'MK01_HUMAN_full_11-26-2021_b06.a2m',
-  'MSH2_HUMAN_Jia_2020': 'MSH2_HUMAN_full_11-26-2021_b05.a2m',
-  'MTH3_HAEAE_Rockah-Shmuel_2015': 'MTH3_HAEAE_full_11-26-2021_b02.a2m',
-  'NCAP_I34A1_Doud_2015': 'NCAP_I34A1_theta0.99_full_11-26-2021_b09.a2m',
-  'NRAM_I33A0_Jiang_standard_2016': 'NRAM_I33A0_full_11-26-2021_b01.a2m',
-  'NUD15_HUMAN_Suiter_2020': 'NUD15_HUMAN_full_11-26-2021_b04.a2m',
-  'P53_HUMAN_Giacomelli_NULL_Etoposide_2018': 'P53_HUMAN_full_04-29-2022_b09.a2m',
-  'P53_HUMAN_Giacomelli_NULL_Nutlin_2018': 'P53_HUMAN_full_04-29-2022_b09.a2m',
-  'P53_HUMAN_Giacomelli_WT_Nutlin_2018': 'P53_HUMAN_full_04-29-2022_b09.a2m',
-  'P53_HUMAN_Kotler_2018': 'P53_HUMAN_full_11-26-2021_b09.a2m',
-  'P84126_THETH_Chan_2017': 'P84126_THETH_full_11-26-2021_b04.a2m',
-  'PA_I34A1_Wu_2015': 'PA_I34A1_full_theta0.99_04-29-2022_b09.a2m',
-  'PABP_YEAST_Melamed_2013': 'PABP_YEAST_full_11-26-2021_b07.a2m',
-  'POLG_CXB3N_Mattenberger_2021': 'POLG_CXB3N_1-861_theta0.99_04-29-2022_b07.a2m',
-  'POLG_HCVJF_Qi_2014': 'POLG_HCVJF_theta0.99_1984-2089_11-26-2021_b08.a2m',
-  'PTEN_HUMAN_Matreyek_2021': 'PTEN_HUMAN_full_11-26-2021_b01.a2m',
-  'PTEN_HUMAN_Mighell_2018': 'PTEN_HUMAN_full_11-26-2021_b01.a2m',
-  'Q2N0S5_9HIV1_Haddox_2018': 'Q2N0S5_9HIV1_full_theta0.99_04-29-2022_b09.a2m',
-  'Q59976_STRSQ_Romero_2015': 'Q59976_STRSQ_full_11-26-2021_b03.a2m',
-  'R1AB_SARS2_Flynn_growth_2022': 'R1AB_SARS2_02-19-2022_b07.a2m',
-  'RASH_HUMAN_Bandaru_2017': 'RASH_HUMAN_full_11-26-2021_b03.a2m',
-  'REV_HV1H2_Fernandes_2016': 'REV_HV1H2_full_theta0.99_04-29-2022_b09.a2m',
-  'RL401_YEAST_Mavor_2016': 'RL401_YEAST_full_11-26-2021_b01.a2m',
-  'RL401_YEAST_Roscoe_2013': 'RL401_YEAST_full_11-26-2021_b01.a2m',
-  'RL401_YEAST_Roscoe_2014': 'RL401_YEAST_full_11-26-2021_b01.a2m',
-  'SC6A4_HUMAN_Young_2021': 'SC6A4_HUMAN_full_11-26-2021_b02.a2m',
-  'SCN5A_HUMAN_Glazer_2019': 'SCN5A_HUMAN_1611-1642_11-26-2021_b03.a2m',
-  'SPG1_STRSG_Olson_2014': 'SPG1_STRSG_full_11-26-2021_b07.a2m',
-  'SPIKE_SARS2_Starr_bind_2020': 'SPIKE_SARS2_theta0.99_full_11-26-2021_b01.a2m',
-  'SPIKE_SARS2_Starr_expr_2020': 'SPIKE_SARS2_theta0.99_full_11-26-2021_b01.a2m',
-  'SRC_HUMAN_Ahler_CD_2019': 'SRC_HUMAN_full_11-26-2021_b06.a2m',
-  'SUMO1_HUMAN_Weile_2017': 'SUMO1_HUMAN_full_11-26-2021_b02.a2m',
-  'SYUA_HUMAN_Newberry_2020': 'SYUA_HUMAN_full_04-29-2022_b01.a2m',
-  'TADBP_HUMAN_Bolognesi_2019': 'TADBP_HUMAN_full_11-26-2021_b09.a2m',
-  'TAT_HV1BR_Fernandes_2016': 'TAT_HV1BR_full_theta0.99_04-29-2022_b09.a2m',
-  'TPK1_HUMAN_Weile_2017': 'TPK1_HUMAN_full_11-26-2021_b02.a2m',
-  'TPMT_HUMAN_Matreyek_2018': 'TPMT_HUMAN_full_11-26-2021_b03.a2m',
-  'TPOR_HUMAN_Bridgford_S505N_2020': 'TPOR_HUMAN_full_11-26-2021_b01.a2m',
-  'TRPC_SACS2_Chan_2017': 'TRPC_SACS2_full_11-26-2021_b07.a2m',
-  'TRPC_THEMA_Chan_2017': 'TRPC_THEMA_full_11-26-2021_b07.a2m',
-  'UBC9_HUMAN_Weile_2017': 'UBC9_HUMAN_full_11-26-2021_b03.a2m',
-  'UBE4B_MOUSE_Starita_2013': 'UBE4B_MOUSE_full_11-26-2021_b05.a2m',
-  'VKOR1_HUMAN_Chiasson_abundance_2020': 'VKOR1_HUMAN_full_11-26-2021_b03.a2m',
-  'VKOR1_HUMAN_Chiasson_activity_2020': 'VKOR1_HUMAN_full_11-26-2021_b03.a2m',
-  'YAP1_HUMAN_Araya_2012': 'YAP1_HUMAN_full_11-26-2021_b02.a2m',
-
+  'A0A140D2T1_ZIKV_Sourisseau_growth_2019': 'A0A140D2T1_ZIKV'
+  'A0A192B1T2_9HIV1_Haddox_2018': 'A0A192B1T2_9HIV1'
+  'A0A1I9GEU1_NEIME_Kennouche_2019': 'A0A1I9GEU1_NEIME'
+  'A0A2Z5U3Z0_9INFA_Doud_2016': 'A0A2Z5U3Z0_9INFA'
+  'A0A2Z5U3Z0_9INFA_Wu_2014': 'A0A2Z5U3Z0_9INFA'
+  'A4_HUMAN_Seuma_2021': 'A4_HUMAN'
+  'A4D664_9INFA_Soh_CCL141_2019': 'A4D664_9INFA'
+  'A4GRB6_PSEAI_Chen_2020': 'A4GRB6_PSEAI'
+  'AACC1_PSEAI_Dandage_2018': 'AACC1_PSEAI'
+  'ADRB2_HUMAN_Jones_2020': 'ADRB2_HUMAN'
+  'AMIE_PSEAE_Wrenbeck_2017': 'AMIE_PSEAE'
+  'B3VI55_LIPST_Klesmith_2015': 'LGK_LIPST'
+  'BLAT_ECOLX_Deng_2012': 'BLAT_ECOLX'
+  'BLAT_ECOLX_Firnberg_2014': 'BLAT_ECOLX'
+  'BLAT_ECOLX_Jacquier_2013': 'BLAT_ECOLX'
+  'BLAT_ECOLX_Stiffler_2015': 'BLAT_ECOLX'
+  'BRCA1_HUMAN_Findlay_2018': 'BRCA1_HUMAN'
+  'C6KNH7_9INFA_Lee_2018': 'C6KNH7_9INFA'
+  'CALM1_HUMAN_Weile_2017': 'CALM1_HUMAN'
+  'CAPSD_AAV2S_Sinai_substitutions_2021': 'CAPSD_AAV2S'
+  'CCDB_ECOLI_Adkar_2012': 'CCDB_ECOLI'
+  'CCDB_ECOLI_Tripathi_2016': 'CCDB_ECOLI'
+  'CP2C9_HUMAN_Amorosi_abundance_2021': 'CP2C9_HUMAN'
+  'CP2C9_HUMAN_Amorosi_activity_2021': 'CP2C9_HUMAN'
+  'DLG4_HUMAN_Faure_2021': 'DLG4_HUMAN'
+  'DLG4_RAT_McLaughlin_2012': 'DLG4_RAT'
+  'DYR_ECOLI_Thompson_plusLon_2019': 'DYR_ECOLI'
+  'ENV_HV1B9_DuenasDecamp_2016': 'ENV_HV1B9'
+  'ENV_HV1BR_Haddox_2016': 'ENV_HV1BR'
+  'ESTA_BACSU_Nutschel_2020': 'ESTA_BACSU'
+  'F7YBW8_MESOW_Aakre_2015': 'F7YBW8_MESOW'
+  'GAL4_YEAST_Kitzman_2015': 'GAL4_YEAST'
+  'GCN4_YEAST_Staller_induction_2018': 'GCN4_YEAST'
+  'GFP_AEQVI_Sarkisyan_2016': 'GFP_AEQVI'
+  'GRB2_HUMAN_Faure_2021': 'GRB2_HUMAN'
+  'HIS7_YEAST_Pokusaeva_2019': 'HIS7_YEAST'
+  'HSP82_YEAST_Flynn_2019': 'HSP82_YEAST'
+  'HSP82_YEAST_Mishra_2016': 'HSP82_YEAST'
+  'I6TAH8_I68A0_Doud_2015': 'I6TAH8_I68A0'
+  'IF1_ECOLI_Kelsic_2016': 'IF1_ECOLI'
+  'KCNH2_HUMAN_Kozek_2020': 'KCNH2_HUMAN'
+  'KKA2_KLEPN_Melnikov_2014': 'KKA2_KLEPN'
+  'MK01_HUMAN_Brenan_2016': 'MK01_HUMAN'
+  'MSH2_HUMAN_Jia_2020': 'MSH2_HUMAN'
+  'MTH3_HAEAE_Rockah-Shmuel_2015': 'MTH3_HAEAE'
+  'NCAP_I34A1_Doud_2015': 'NCAP_I34A1'
+  'NRAM_I33A0_Jiang_standard_2016': 'NRAM_I33A0'
+  'NUD15_HUMAN_Suiter_2020': 'NUD15_HUMAN'
+  'P53_HUMAN_Giacomelli_NULL_Etoposide_2018': 'P53_HUMAN'
+  'P53_HUMAN_Giacomelli_NULL_Nutlin_2018': 'P53_HUMAN'
+  'P53_HUMAN_Giacomelli_WT_Nutlin_2018': 'P53_HUMAN'
+  'P53_HUMAN_Kotler_2018': 'P53_HUMAN'
+  'P84126_THETH_Chan_2017': 'P84126_THETH'
+  'PA_I34A1_Wu_2015': 'PA_I34A1'
+  'PABP_YEAST_Melamed_2013': 'PABP_YEAST'
+  'POLG_CXB3N_Mattenberger_2021': 'POLG_CXB3N'
+  'POLG_HCVJF_Qi_2014': 'POLG_HCVJF'
+  'PTEN_HUMAN_Matreyek_2021': 'PTEN_HUMAN'
+  'PTEN_HUMAN_Mighell_2018': 'PTEN_HUMAN'
+  'Q2N0S5_9HIV1_Haddox_2018': 'Q2N0S5_9HIV1'
+  'Q59976_STRSQ_Romero_2015': 'Q59976_STRSQ'
+  'R1AB_SARS2_Flynn_growth_2022': 'R1AB_SARS2'
+  'RASH_HUMAN_Bandaru_2017': 'RASH_HUMAN'
+  'REV_HV1H2_Fernandes_2016': 'REV_HV1H2'
+  'RL401_YEAST_Mavor_2016': 'RL40A_YEAST'
+  'RL401_YEAST_Roscoe_2013': 'RL40A_YEAST'
+  'RL401_YEAST_Roscoe_2014': 'RL40A_YEAST'
+  'SC6A4_HUMAN_Young_2021': 'SC6A4_HUMAN'
+  'SCN5A_HUMAN_Glazer_2019': 'SCN5A_HUMAN'
+  'SPG1_STRSG_Olson_2014': 'SPG1_STRSG'
+  'SPIKE_SARS2_Starr_bind_2020': 'SPIKE_SARS2'
+  'SPIKE_SARS2_Starr_expr_2020': 'SPIKE_SARS2'
+  'SRC_HUMAN_Ahler_CD_2019': 'SRC_HUMAN'
+  'SUMO1_HUMAN_Weile_2017': 'SUMO1_HUMAN'
+  'SYUA_HUMAN_Newberry_2020': 'SYUA_HUMAN'
+  'TADBP_HUMAN_Bolognesi_2019': 'TADBP_HUMAN'
+  'TAT_HV1BR_Fernandes_2016': 'TAT_HV1BR'
+  'TPK1_HUMAN_Weile_2017': 'TPK1_HUMAN'
+  'TPMT_HUMAN_Matreyek_2018': 'TPMT_HUMAN'
+  'TPOR_HUMAN_Bridgford_S505N_2020': 'TPOR_HUMAN'
+  'TRPC_SACS2_Chan_2017': 'TRPC_SACS2'
+  'TRPC_THEMA_Chan_2017': 'TRPC_THEMA'
+  'UBC9_HUMAN_Weile_2017': 'UBC9_HUMAN'
+  'UBE4B_MOUSE_Starita_2013': 'UBE4B_MOUSE'
+  'VKOR1_HUMAN_Chiasson_abundance_2020': 'VKOR1_HUMAN'
+  'VKOR1_HUMAN_Chiasson_activity_2020': 'VKOR1_HUMAN'
+  'YAP1_HUMAN_Araya_2012': 'YAP1_HUMAN'
 
 rax_path: "/home/danielbr/miniconda3/envs/rax/bin/raxmlHPC-PTHREADS-SSE3"
 
 # Column names as displayed in the dms table
-position_col: "Site"
-enrichment_col: "5percent_CO2_20uM_IPTG"
-aminoacid_col: "AminoAcid"
+position_col: ""
+enrichment_col: ""
+aminoacid_col: ""
