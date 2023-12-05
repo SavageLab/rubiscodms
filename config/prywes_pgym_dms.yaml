@@ -101,6 +101,6 @@ reference_seq:
 rax_path: "/home/danielbr/miniconda3/envs/rax/bin/raxmlHPC-PTHREADS-SSE3"
 
 # Column names as displayed in the dms table
-position_col: ""
-enrichment_col: ""
-aminoacid_col: ""
+position_col: "Site"
+enrichment_col: "DMS_score"
+aminoacid_col: "Mt_aminoacid"

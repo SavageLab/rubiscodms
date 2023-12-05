@@ -129,7 +129,6 @@ def main():
 	             }
 
 	df_aapref = pd.read_csv(dms_prefs)
-	df_aapref = df_aapref.head(18)
 	trns_df = df_aapref.T
 	# Create a list to store each subplot
 	subplots = []

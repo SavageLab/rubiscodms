@@ -1,6 +1,6 @@
 # **** Variables ****
-configfile: "config/prywes_dms.yaml"
-# configfile: "config/prywes_pgym_dms.yaml"
+# configfile: "config/prywes_dms.yaml"
+configfile: "config/prywes_pgym_dms.yaml"
 
 # **** Imports ****
 import glob
@@ -15,6 +15,7 @@ rule all:
 		expand("{run}_{min_ident}/{experiment_id}/figures/aa_preference.pdf", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/figures/aa_preference.png", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/processed_inputs/nt_alignment_msa.fna", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
+		expand("{run}_{min_ident}/{experiment_id}/processed_inputs/matched_nt_alignment_msa.fna", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/rax_tree/RAxML_bestTree.nt_tree.newick", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_modelcomparison.md", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"])
 
@@ -92,10 +93,27 @@ rule seq_alignment:
 		phydms_prepalignment {params.ref_imputed} {output.msa} {params.reference_seq} --minidentity {wildcards.min_ident}
 		"""
 
+
+rule match_alignment_to_sub:
+	input:
+		dms_data = lambda wildcards: glob.glob("{in_dir}/{experiment_id}.csv".format(
+			in_dir=config['input_dir'], experiment_id=wildcards.experiment_id)),
+		refseq = lambda wildcards: glob.glob("{in_dir}/fasta/{reference_seq}.fasta".format(in_dir=config['input_dir'],
+			reference_seq=config["reference_seq"][wildcards.experiment_id])),
+		msa = "{run}_{min_ident}/{experiment_id}/processed_inputs/nt_alignment_msa.fna",
+	output:
+		matched_msa = "{run}_{min_ident}/{experiment_id}/processed_inputs/matched_nt_alignment_msa.fna"
+	params:
+		position_col = config["position_col"],
+	conda:
+		"envs/dms.yaml"
+	script:
+		"py/match_alignNsubs.py"
+
 # noinspection SmkAvoidTabWhitespace
 rule infer_tree:
 	input:
-		msa = "{run}_{min_ident}/{experiment_id}/processed_inputs/nt_alignment_msa.fna"
+		matched_msa = "{run}_{min_ident}/{experiment_id}/processed_inputs/matched_nt_alignment_msa.fna"
 	output:
 		phylo_tree = "{run}_{min_ident}/{experiment_id}/rax_tree/RAxML_bestTree.nt_tree.newick"
 	params:
@@ -107,14 +125,14 @@ rule infer_tree:
 	shell:
 		"""
 		rm -rf {params.output_path}/* || true
-		raxmlHPC-PTHREADS-SSE3 -s {input.msa} -w {params.output_path} -n nt_tree.newick -m 'GTRCAT' -p1 -T {threads} 
+		raxmlHPC-PTHREADS-SSE3 -s {input.matched_msa} -w {params.output_path} -n nt_tree.newick -m 'GTRCAT' -p1 -T {threads} 
 		"""
 
 # noinspection SmkAvoidTabWhitespace
 rule phydms:
 	input:
 		phylo_tree = "{run}_{min_ident}/{experiment_id}/rax_tree/RAxML_bestTree.nt_tree.newick",
-		msa= "{run}_{min_ident}/{experiment_id}/processed_inputs/nt_alignment_msa.fna",
+		matched_msa = "{run}_{min_ident}/{experiment_id}/processed_inputs/matched_nt_alignment_msa.fna",
 		dms_prefs = "{run}_{min_ident}/{experiment_id}/processed_inputs/aa_preference.csv"
 	output:
 		dms_models = "{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_modelcomparison.md"
@@ -126,4 +144,4 @@ rule phydms:
 	threads:
 		config["threads"]
 	shell:
-		"phydms_comprehensive --omegabysite --diffprefsbysite --tree {input.phylo_tree} --ncpus {threads} {params.outdir}/{wildcards.experiment_id} {input.msa} {input.dms_prefs}"
+		"phydms_comprehensive --omegabysite --diffprefsbysite --tree {input.phylo_tree} --ncpus {threads} {params.outdir}/{wildcards.experiment_id} {input.matched_msa} {input.dms_prefs}"
