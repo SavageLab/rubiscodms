@@ -1,4 +1,4 @@
-# PhyDMS Workflow Utilizing DMS data
+    # PhyDMS Workflow Utilizing DMS data
 
 ## Summary
 + This document describes the application of `phydms` to carry out phylogenetic analyses using Experimentally Informed Codon Models (ExpCM) 

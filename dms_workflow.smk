@@ -1,6 +1,6 @@
 # **** Variables ****
-# configfile: "config/prywes_dms.yaml"
-configfile: "config/prywes_pgym_dms.yaml"
+configfile: "config/prywes_dms.yaml"
+# configfile: "config/prywes_pgym_dms.yaml"
 
 # **** Imports ****
 import glob
@@ -13,16 +13,17 @@ rule all:
 	input:
 		expand("{run}_{min_ident}/{experiment_id}/processed_inputs/aa_preference.csv",run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/figures/aa_preference.pdf", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
+		expand("{run}_{min_ident}/{experiment_id}/figures/aa_preference.png", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/processed_inputs/nt_alignment_msa.fna", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/rax_tree/RAxML_bestTree.nt_tree.newick", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
-		expand("{run}_{min_ident}/{experiment_id}/phydmsresults/modelcomparison.md", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"])
+		expand("{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_modelcomparison.md", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"])
 
 # noinspection SmkAvoidTabWhitespace
 rule convert_enrichment:
 	input:
 		dms_data = lambda wildcards: glob.glob("{in_dir}/{experiment_id}.csv".format(
 			in_dir=config['input_dir'],
-			experiment_id=config["reference_seq"]))
+			experiment_id=wildcards.experiment_id))
 	output:
 		dms_prefs = "{run}_{min_ident}/{experiment_id}/processed_inputs/aa_preference.csv"
 	params:
@@ -35,6 +36,7 @@ rule convert_enrichment:
 		"""
 		Convert DMS scores in:\n {input.dms_data}
 		To AA Preferences in:\n {output.dms_prefs}
+		Wildcards: {wildcards}
 		"""
 	script:
 		"py/enrichm2aa-preference.py"
@@ -115,7 +117,7 @@ rule phydms:
 		msa= "{run}_{min_ident}/{experiment_id}/processed_inputs/nt_alignment_msa.fna",
 		dms_prefs = "{run}_{min_ident}/{experiment_id}/processed_inputs/aa_preference.csv"
 	output:
-		dms_models = "{run}_{min_ident}/{experiment_id}/phydmsresults/modelcomparison.md"
+		dms_models = "{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_modelcomparison.md"
 	params:
 		outdir = "{run}_{min_ident}/{experiment_id}/phydmsresults",
 		outprefix = "phydms_run_"
@@ -124,4 +126,4 @@ rule phydms:
 	threads:
 		config["threads"]
 	shell:
-		"phydms_comprehensive --omegabysite --diffprefsbysite --tree {input.phylo_tree} --ncpus {threads} {params.outdir}/{params.outprefix} {input.msa} {input.dms_prefs}"
+		"phydms_comprehensive --omegabysite --diffprefsbysite --tree {input.phylo_tree} --ncpus {threads} {params.outdir}/{wildcards.experiment_id} {input.msa} {input.dms_prefs}"

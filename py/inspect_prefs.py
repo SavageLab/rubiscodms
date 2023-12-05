@@ -98,7 +98,7 @@ def plot_grouped_radar(df, title, values_series, label_series, group_series):
 def main():
 	# Snakemake I/O
 	# Inputs
-	dms_prefs = str(snakemake.input.dms_out)
+	dms_prefs = str(snakemake.input.dms_prefs)
 	# Outputs
 	radial_prefs = str(snakemake.output.radial_prefs)
 	# Params
@@ -177,8 +177,7 @@ def main():
 				axes[i, j].axis("off")
 
 	plt.tight_layout()
-	plt.show()
-	plt.savefig('delete.png', format='png')
+	plt.savefig(radial_prefs, format='png')
 
 
 if __name__ == "__main__":
