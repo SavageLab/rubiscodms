@@ -104,7 +104,7 @@ def main():
 	# Params
 	site_offset = int(snakemake.params.site_offset)
 	# DEBUG INPUT
-	# dms_prefs = "/Users/bellieny/projects/team_resources/toolbox/phylo_dms_workflow/scratch/edited_aa_preferences.csv"
+	# dms_prefs = "/groups/doudna/projects/daniel_projects/prywes_n/rubisco_dms_0.0/rubisco_dms/processed_inputs/aa_preference.csv"
 
 	aa_groups = {'G': 'np',
 	             'A': 'np',
@@ -129,6 +129,7 @@ def main():
 	             }
 
 	df_aapref = pd.read_csv(dms_prefs)
+	df_aapref = df_aapref.head(300)
 	trns_df = df_aapref.T
 	# Create a list to store each subplot
 	subplots = []

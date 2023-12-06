@@ -71,7 +71,7 @@ rule aa_preference_logo:
 # noinspection SmkAvoidTabWhitespace
 rule seq_alignment:
 	input:
-		multi_fasta = lambda wildcards: glob.glob("{in_dir}/multi_fasta.fna".format(in_dir=config['input_dir']))
+		multi_fasta = "{run}_{min_ident}/{experiment_id}/fasta/multi_fasta.fna"
 	output:
 		msa = "{run}_{min_ident}/{experiment_id}/processed_inputs/nt_alignment_msa.fna"
 	params:
@@ -93,7 +93,7 @@ rule seq_alignment:
 		phydms_prepalignment {params.ref_imputed} {output.msa} {params.reference_seq} --minidentity {wildcards.min_ident}
 		"""
 
-
+# noinspection SmkAvoidTabWhitespace
 rule match_alignment_to_sub:
 	input:
 		dms_data = lambda wildcards: glob.glob("{in_dir}/{experiment_id}.csv".format(

@@ -8,11 +8,11 @@ import pandas as pd
 def main():
 	# Snakemake I/O
 	# Inputs
-	dms_prefs = str(snakemake.input.dms_prefs)
+	dms_data = str(snakemake.input.dms_data)
 	msa = str(snakemake.input.msa)
 	refseq_path = str(snakemake.input.refseq)
 	# Outputs
-	matched_alignments = str(snakemake.output.matched_alignments)
+	matched_alignments = str(snakemake.output.matched_msa)
 	# Params
 	position_col = str(snakemake.params.position_col)
 
@@ -25,8 +25,8 @@ def main():
 	# wt_aminoacid_col = "Wt_aminoacid"
 
 	# === Import Substitution Tables ===
-	df = pd.read_csv(dms_prefs)
-	(site_min, site_max) = (df[position_col].astype(int).min(), df[position_col].astype(int).max())
+	df = pd.read_csv(dms_data)
+	(site_min, site_max) = ((df[position_col].astype(int).min() * 3) + 1, (df[position_col].astype(int).max() * 3) + 1)
 
 	# === Import Reference
 	refseq = SeqIO.read(open(refseq_path), "fasta")
