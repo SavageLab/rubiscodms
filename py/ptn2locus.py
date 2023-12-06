@@ -2,6 +2,7 @@
 from argparse import ArgumentParser as argp
 import copy
 import re
+import time
 # External modules
 import pandas as pd
 import yaml
@@ -102,6 +103,8 @@ def ptn_to_nuc(id_list, db_name):
 	for seq_id in id_list:
 		progress += 1
 		# Standardize protein identifiers to NCBI UIDs through ESearch
+		# Introduce a delay of 1 second before making the request
+		time.sleep(3)
 		handle = Entrez.esearch(db="protein", term=f"{seq_id}", idtype="acc")
 		search_record = Entrez.read(handle)
 		try:
