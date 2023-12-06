@@ -40,5 +40,6 @@ rule protein_to_locus:
 		"envs/ptn2locus.yaml"
 	shell:
 		"""
+		touch {output.multi_fna}
 		python3 py/ptn2locus.py {input.id_list} 'thedoudnalab@gmail.com' -o {output.multi_fna}
 		"""

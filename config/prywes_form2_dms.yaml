@@ -1,0 +1,23 @@
+# Folder where input data is stored
+input_dir: "/groups/doudna/projects/daniel_projects/prywes_n/input_data"
+
+threads: 20
+
+# File directory where files will be stored in
+run: "/groups/doudna/projects/daniel_projects/prywes_n/rubisco_form2_dms"
+
+min_ident: ['0.70']
+site_offset: '3'
+
+reference_seq:
+  'rubisco_form2_dms': 'WP_011390153.1'
+
+reference_fasta:
+  'rubisco_form2_dms': "fasta/WP_011390153.1.fna"
+
+rax_path: "raxmlHPC-PTHREADS-SSE3"
+
+# Column names as displayed in the dms table
+position_col: "Site"
+enrichment_col: "5percent_CO2_20uM_IPTG"
+aminoacid_col: "AminoAcid"

@@ -17,8 +17,9 @@ def main():
 	position_col = str(snakemake.params.position_col)
 
 	# DEBUG INPUT
-	# dms_prefs = "/groups/doudna/projects/daniel_projects/prywes_n/pgym_input_data/YAP1_HUMAN_Araya_2012.csv"
+	# dms_data = "/groups/doudna/projects/daniel_projects/prywes_n/pgym_input_data/YAP1_HUMAN_Araya_2012.csv"
 	# refseq_path = "/groups/doudna/projects/daniel_projects/prywes_n/pgym_input_data/fasta/YAP1_HUMAN.fasta"
+	# msa = "/groups/doudna/projects/daniel_projects/prywes_n/rubisco_form2_dms_0.70/rubisco_form2_dms/processed_inputs/matched_nt_alignment_msa.fna"
 	# position_col = 'Site'
 	# enrichment_col = 'DMS_score'
 	# aminoacid_col = 'Mt_aminoacid'
@@ -26,14 +27,14 @@ def main():
 
 	# === Import Substitution Tables ===
 	df = pd.read_csv(dms_data)
-	(site_min, site_max) = ((df[position_col].astype(int).min() * 3) + 1, (df[position_col].astype(int).max() * 3) + 1)
-
+	(site_min, site_max) = ((df[position_col].astype(int).min() * 3) - 2, (df[position_col].astype(int).max() * 3))
+	print(f"The positions found on the DMS range from {site_min} to {site_max}")
 	# === Import Reference
 	refseq = SeqIO.read(open(refseq_path), "fasta")
 
 	# === Import Alignment
 	alignment = AlignIO.read(open(msa), "fasta")
-
+	aligned_record = []
 	for aligned_record in alignment:
 		if len(aligned_record.seq) != len(refseq.seq):
 			print("#### WARNING ####\nThe MSA provided has a different length than that of the original reference sequence"
@@ -42,10 +43,11 @@ def main():
 			      "\nPlease provide the alignment that includes the original length so this rule can make the necessary"
 			      "adjustments.\n")
 			break
-		aligned_record.seq = aligned_record.seq[(site_min - 1):(site_max - 1)]
+		aligned_record.seq = aligned_record.seq[(site_min - 1):site_max]
 
 	with open(matched_alignments, 'w') as f:
 		AlignIO.write(alignment, f, 'fasta')
+	print(f"Process finalized. Aligned length post-trim: {len(aligned_record.seq)}")
 
 
 if __name__ == "__main__":

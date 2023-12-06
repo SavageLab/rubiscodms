@@ -7,7 +7,7 @@ import time
 import pandas as pd
 import yaml
 from Bio import SeqIO
-from bioservices import UniProt
+from bioservices.uniprot import UniProt
 from Bio.SeqRecord import SeqRecord
 from Bio import Entrez
 import urllib.request
@@ -59,13 +59,16 @@ def ukb2ncbi(uid):
 	u = UniProt(verbose=False)
 	# gbk_id = u.mapping("UniProtKB_AC-ID", "EMBL-GenBank-DDBJ", query=uid, polling_interval_seconds=3, max_waiting_time=100)["results"][0]["to"]
 	try:
-		prot_id = u.mapping("UniProtKB_AC-ID", "EMBL-GenBank-DDBJ_CDS", query=uid, polling_interval_seconds=3, max_waiting_time=100)["results"][0]["to"]
+		prot_id = u.mapping("UniProtKB_AC-ID",
+		                    "EMBL-GenBank-DDBJ_CDS",
+		                    query=uid, polling_interval_seconds=3,
+		                    max_waiting_time=100)["results"][0]["to"]
 	except (TypeError, IndexError):
 		prot_id = ''
 	return prot_id
 
 
-def elink_routine(db, hit_uid):
+def elink_routine(db, dbfrom, hit_uid):
 	dup_check = []
 	not_found = ""
 	linked = ""
@@ -73,7 +76,7 @@ def elink_routine(db, hit_uid):
 	server_attempts = 0
 	handle = ""
 	try:
-		handle = Entrez.elink(dbfrom="protein", db=db, id=f"{hit_uid}")
+		handle = Entrez.elink(dbfrom=f"{dbfrom}", db=db, id=f"{hit_uid}")
 	except urllib.error.HTTPError as err:
 		if err.code == 500:
 			print(f'An internal server error occurred while handling the accession {hit_uid}')
@@ -81,7 +84,7 @@ def elink_routine(db, hit_uid):
 			return linked, hit_uid, not_found
 	try:
 		link_record = Entrez.read(handle)
-	except (RuntimeError, ValueError):
+	except (RuntimeError, AttributeError, ValueError):
 		not_found = hit_uid
 	if link_record:
 		try:
@@ -90,8 +93,11 @@ def elink_routine(db, hit_uid):
 				dup_check.append(linked)
 		except (IndexError, KeyError):
 			not_found = hit_uid
-	handle.close()
-	return linked, hit_uid, not_found
+	try:
+		handle.close()
+	except AttributeError:
+		pass
+	return linked, link_record, not_found
 
 
 def ptn_to_nuc(id_list, db_name):
@@ -102,29 +108,52 @@ def ptn_to_nuc(id_list, db_name):
 
 	for seq_id in id_list:
 		progress += 1
+		max_retries = 20
+		search_record = {}
 		# Standardize protein identifiers to NCBI UIDs through ESearch
 		# Introduce a delay of 1 second before making the request
-		time.sleep(3)
-		handle = Entrez.esearch(db="protein", term=f"{seq_id}", idtype="acc")
-		search_record = Entrez.read(handle)
+
+		# Attempt the search with retries
+		for _ in range(max_retries):
+			try:
+				handle = Entrez.esearch(db="protein", term=f"{seq_id}", idtype="acc")
+				search_record = Entrez.read(handle)
+				handle.close()
+				break  # Break the loop if successful
+			except urllib.error.HTTPError as e:
+				if e.code == 429:  # HTTP 429: Too Many Requests
+					print(f"Received HTTP 429 error. Retrying in 10 seconds...")
+					time.sleep(10)
+				else:
+					continue  # Re-raise other HTTP errors
+
+		# try:
+		# 	handle = Entrez.esearch(db="protein", term=f"{seq_id}", idtype="acc")
+		# 	search_record = Entrez.read(handle)
+		# except urllib.error.HTTPError:
+		# 	time.sleep(10)
 		try:
 			uid = search_record['IdList'][0]
-		except IndexError:
-			print(f"Entrez.esearch could not find results for {seq_id}")
+		except (IndexError, AttributeError, KeyError):
+			print(f"Entrez.esearch could not find results for {seq_id} on NCBI")
 			not_found_list.append(seq_id)
 			continue
-		handle.close()
+
 
 		# Grab Nuccore UIDs from the source database
-		loop_nuc_gi, loop_nuc_acc, not_found_hit = elink_routine(db_name, uid)
+		loop_nuc_gi, loop_nuc_acc, not_found_hit = elink_routine(db_name, 'protein', uid)
 		if not_found_hit:
-			loop_nuc_gi, loop_nuc_acc, c_not_found_hit = elink_routine(db_name,
+			loop_nuc_gi, loop_nuc_acc, c_not_found_hit = elink_routine(db_name, 'ipg',
 			                                                           ukb2ncbi(not_found_hit))
 
 			if not loop_nuc_gi:
-				not_found_list.append(c_not_found_hit)
-				continue
+				loop_nuc_gi, loop_nuc_acc, c_not_found_hit = elink_routine(db_name, 'protein',
+				                                                           ukb2ncbi(not_found_hit))
+				if not loop_nuc_gi:
+					not_found_list.append(c_not_found_hit)
+					continue
 		if loop_nuc_gi:
+			print(f"Entry {loop_nuc_gi} found on UniProt")
 			source2target.setdefault(loop_nuc_gi, seq_id)
 			nucleotide_uid_list.append(loop_nuc_gi)
 			print(f"Nuccore GI and ptn accession: {loop_nuc_gi} {seq_id}")
@@ -242,8 +271,9 @@ def main():
 	print("Extracting relevant features from GenBank objects")
 	target_gb_dict, target_hit_dict = gb_plier(gb_seqrec, hit_to_link, 0)
 
+	print(f"Exporting output to {output_path}")
 	for item in target_gb_dict:
-		with open(output_path, "a") as f:
+		with open(str(output_path), "a") as f:
 			target_gb_dict[item].id = target_gb_dict[item].features[0].qualifiers["protein_id"][0]
 			SeqIO.write(target_gb_dict[item], f, "fasta")
 

@@ -1,3 +1,5 @@
+import re
+
 from Bio import AlignIO
 from sys import argv
 
@@ -15,6 +17,13 @@ def main():
 
 	str_out = ""
 	for rec in records:
+		if re.search(r"|", rec.id):
+			try:
+				seq_id = rec.id.split("|")[1]
+				str_out += f"{seq_id}\n"
+			except IndexError:
+				continue
+			continue
 		seq_id = rec.id.split("_")[1]
 		seq_id = seq_id.split("/")[0]
 		str_out += f"{seq_id}\n"
