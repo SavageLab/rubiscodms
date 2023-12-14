@@ -104,3 +104,8 @@ rax_path: "/home/danielbr/miniconda3/envs/rax/bin/raxmlHPC-PTHREADS-SSE3"
 position_col: "Site"
 enrichment_col: "DMS_score"
 aminoacid_col: "Mt_aminoacid"
+
+# Parent path to the shared database files in the server
+shared_db_path: "/shared/db/genbank/256/blast/nr"
+# PSI-BLAST custom columns
+blast_custom_cols: "qacc sacc evalue pident qcovhsp staxid"

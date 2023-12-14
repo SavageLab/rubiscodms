@@ -126,7 +126,8 @@ def ptn_to_nuc(id_list, db_name):
 					time.sleep(10)
 				else:
 					continue  # Re-raise other HTTP errors
-
+			except urllib.error.URLError:
+				continue
 		# try:
 		# 	handle = Entrez.esearch(db="protein", term=f"{seq_id}", idtype="acc")
 		# 	search_record = Entrez.read(handle)
@@ -167,9 +168,20 @@ def nuc_to_gb(uid_list):
 	# Get Genbank records for each Nuccore UID
 	gb_records = {}
 	for uid in uid_list:
-		handle = Entrez.efetch(db="nucleotide", id=f"{uid}", rettype = 'gbwithparts', retmode="text")
-		record = SeqIO.read(handle, "genbank")
-		gb_records.setdefault(uid, record)
+		max_retries = 20
+		for _ in range(max_retries):
+			try:
+				handle = Entrez.efetch(db="nucleotide", id=f"{uid}", rettype = 'gbwithparts', retmode="text")
+				record = SeqIO.read(handle, "genbank")
+				gb_records.setdefault(uid, record)
+			except urllib.error.HTTPError as e:
+				if e.code == 429:  # HTTP 429: Too Many Requests
+					print(f"Received HTTP 429 error. Retrying in 10 seconds...")
+					time.sleep(10)
+				else:
+					continue  # Re-raise other HTTP errors
+			except urllib.error.URLError:
+				continue
 		# Returns a list  of Genbank SeqRecords objects
 	return gb_records
 

@@ -99,7 +99,7 @@ rule match_alignment_to_sub:
 	input:
 		dms_data = lambda wildcards: glob.glob("{in_dir}/{experiment_id}.csv".format(
 			in_dir=config['input_dir'], experiment_id=wildcards.experiment_id)),
-		refseq = lambda wildcards: glob.glob("{in_dir}/fasta/{reference_seq}.fna".format(in_dir=config['input_dir'],
+		refseq = lambda wildcards: glob.glob("{in_dir}/fasta/{reference_seq}.fasta".format(in_dir=config['input_dir'],
 			reference_seq=config["reference_seq"][wildcards.experiment_id])),
 		msa = "{run}_{min_ident}/{experiment_id}/processed_inputs/nt_alignment_msa.fna",
 	output:
