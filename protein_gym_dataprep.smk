@@ -47,7 +47,7 @@ Wildcards: {wildcards}
 	shell:
 		"""
         psiblast \
-        -in_msa {input.refseq} \
+        -query {input.refseq} \
         -db {params.db} \
         -outfmt "10 {params.custom_cols}" \
         -num_threads {threads} \
