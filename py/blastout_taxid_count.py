@@ -1,6 +1,8 @@
 # Installed modules
 import re
-
+import time
+import urllib.request
+import urllib.error
 import pandas as pd
 import yaml
 from Bio import Entrez
@@ -20,14 +22,28 @@ def ncbi_fetch(acc_list, ncbi_db, file_format):
 	Entrez.email = config["entrez_login"]
 	record_list = []
 	for acc in acc_list:
-		handle = Entrez.efetch(db=ncbi_db, id=f"{acc}", rettype=file_format, retmode="text")
-		record = SeqIO.read(handle, file_format)
-		# Synchronize accessions orthography
-		sync_acc = re.search(acc, record.id)
-		record.id = sync_acc.group()
-		print(sync_acc, record.id)
-		# Put it back on the record
-		record_list.append(record)
+		max_retries = 20
+		for _ in range(max_retries):
+			try:
+				handle = Entrez.efetch(db=ncbi_db, id=f"{acc}", rettype=file_format, retmode="text")
+				record = SeqIO.read(handle, file_format)
+				# Synchronize accessions orthography
+				sync_acc = re.search(acc, record.id)
+				try:
+					record.id = sync_acc.group()
+					# Put it back on the record
+					record_list.append(record)
+				except AttributeError:
+					pass
+			except urllib.error.HTTPError as e:
+				if e.code == 429:  # HTTP 429: Too Many Requests
+					print(f"Received HTTP 429 error. Retrying in 10 seconds...")
+					time.sleep(10)
+				else:
+					continue  # Re-raise other HTTP errors
+			except urllib.error.URLError:
+				continue
+
 	return record_list
 
 

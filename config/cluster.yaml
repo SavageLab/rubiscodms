@@ -4,8 +4,12 @@ __default__:
   cores: 2
 
 iterative_search:
-  time: '6:00:00'
+  time: '18:00:00'
   cores: 20
+
+taxid_parse:
+  time: '10:00:00'
+  cores: 2
 
 phydms:
   time: '8:00:00'
