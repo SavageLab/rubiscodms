@@ -8,9 +8,13 @@ iterative_search:
   cores: 20
 
 taxid_parse:
-  time: '10:00:00'
+  time: '16:00:00'
   cores: 2
 
 phydms:
   time: '8:00:00'
+  cores: 20
+
+realignment:
+  time: '10:00:00'
   cores: 20
