@@ -16,5 +16,5 @@ phydms:
   cores: 20
 
 realignment:
-  time: '10:00:00'
+  time: '20:00:00'
   cores: 20
