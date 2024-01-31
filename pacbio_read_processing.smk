@@ -24,24 +24,23 @@ rule hisat2_map:
 	output:
 		bam_map ="{run}/minimap2/{experiment_id}_index.bam"
 	conda:
-		"envs/hisat.yaml"
+		"envs/mapping.yaml"
 	params:
 		sam_map = "{run}/minimap2/{experiment_id}_index.sam",
 	message:
 		"""
 Mapping read pairs:
 R1: {input.p1}
-R2: {input.p2}
 Reference:
 {input.index}
 Mapped Output:
-{params.map}
+{params.sam_map}
         """
 	threads:
 		config["threads"]
 	shell:
 		"""
-		minmap2
+		minmap2 
 		samtools view -bT {input.index} {params.sam_map} > {output.bam_map}
 		rm {params.sam_map}
 		"""
