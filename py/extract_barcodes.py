@@ -1,4 +1,5 @@
 # == Native Modules ==
+import pickle
 # == Installed Modules ==
 from Bio import SeqIO
 import pysam
@@ -16,8 +17,7 @@ def main():
 	# Outputs
 	output_barcode_path = str(snakemake.output.barcode_path)
 	output_barcode_count_path = str(snakemake.output.barcode_count_path)
-	# Params
-	p = str(snakemake.params.p)
+	feature_location_path = str(snakemake.output.feature_location_path)
 
 	# == DEBUG ==
 	# Define the path to the GenBank file
@@ -43,8 +43,8 @@ def main():
 		if feature.type not in features_dictionary:
 			features_dictionary[feature.type] = []
 
-	# Store the feature locations in the dictionary
-	feature_locations[feature.type] = [feature.location.start, feature.location.end]
+		# Store the feature locations in the dictionary
+		feature_locations[feature.type] = [feature.location.start, feature.location.end]
 
 	# Open the SAM file using pysam.AlignmentFile for reading alignment data
 	samfile = pysam.AlignmentFile(alignment_file_path)
@@ -103,6 +103,8 @@ def main():
 
 	# Display the filtered DataFrame
 	filtered_barcode_counts_df.to_csv(output_barcode_count_path, index=False)
+	with open(feature_location_path, 'ab') as f:
+		pickle.dump(feature_locations, f)
 
 
 if __name__ == "__main__":
