@@ -22,11 +22,11 @@ rule hisat2_map:
 		index = "{run}/{experiment_id}_index.fasta",
 		p1 = "{run}/{experiment_id}_PacBio.fastq",
 	output:
-		bam_map ="{run}/minimap2/{experiment_id}_index.bam"
+		bam_map_path ="{run}/minimap2/{experiment_id}.bam"
 	conda:
 		"envs/mapping.yaml"
 	params:
-		sam_map = "{run}/minimap2/{experiment_id}_index.sam",
+		sam_map = "{run}/minimap2/{experiment_id}.sam",
 	message:
 		"""
 Mapping read pairs:
@@ -41,7 +41,7 @@ Mapped Output:
 	shell:
 		"""
 		minmap2 
-		samtools view -bT {input.index} {params.sam_map} > {output.bam_map}
+		samtools view -bT {input.index} {params.sam_map} > {output.bam_map_path}
 		rm {params.sam_map}
 		"""
 
@@ -79,3 +79,18 @@ rule barcode_plot:
 	script:
 		"py/barcode_usability_plot.py"
 
+rule pick_barcode_reads:
+	input:
+		bam_map_path = "{run}/minimap2/{experiment_id}.bam",
+	output:
+		sorted_bam_path = "{run}/minimap2/{experiment_id}_sorted.bam",
+		bam_barcode_reads_path = "{run}/minimap2/{experiment_id}_barcode_reads.bam",
+		sorted_bam_barcode_reads_path = "{run}/minimap2/{experiment_id}_sorted_barcode_reads.bam",
+		consensus_fsata_path = "{run}/minimap2/{experiment_id}_barcode_reads.fasta"
+	conda:
+		"envs/samtools.yaml"
+	message:
+		"""
+		Import  BAM alignment:\n {input.bam_map_path}\n
+		Export consensus FASTA sequences to:\n {output.consensus_fsata_path}		
+		"""
