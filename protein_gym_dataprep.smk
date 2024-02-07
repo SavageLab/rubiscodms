@@ -120,7 +120,7 @@ rule realignment:
 	shell:
 		"""
 		cat {input.refseq} {input.hits_fasta} > {params.merged_input}
-		clustalo --iter 10 --threads {threads} -i {params.merged_input} -o {output.post_search_msa} -v
+		clustalo --iter 1 --threads {threads} -i {params.merged_input} -o {output.post_search_msa} -v
 		"""
 
 # noinspection SmkAvoidTabWhitespace
