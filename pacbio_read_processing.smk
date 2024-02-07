@@ -10,12 +10,12 @@ import glob
 # noinspection SmkAvoidTabWhitespace
 rule all:
 	input:
-		expand("{run}/{experiment_id}_firstPassAllBarcodes1.csv",
-			run=["run"], experiment_id=["experiment_id"]),
-		expand("{run}/{experiment_id}_barcodePlot.png",
+		expand("{run}/barcodes/{experiment_id}_firstPassAllBarcodes1.csv",
+			run=["run"],experiment_id=["experiment_id"]),
+		expand("{run}/minimap2/{experiment_id}.bam",
 		       run=["run"], experiment_id=["experiment_id"]),
-		expand("{run}/minimap2/{experiment_id}_index.bam",
-		       run=["run"], experiment_id=["experiment_id"]),
+		expand("{run}/figures/{experiment_id}_barcodePlot.png",
+			run=["run"],experiment_id=["experiment_id"]),
 
 rule minimap2_map:
 	input:
@@ -52,9 +52,9 @@ rule extract_barcodes:
 			in_dir=config['input_dir'],
 			experiment_id=wildcards.experiment_id))
 	output:
-		barcode_path = "{run}/{experiment_id}_firstPassAllBarcodes1.csv",
-		barcode_count_path = "{run}/{experiment_id}_barcodeCounts.csv",
-		feature_location_path = "{run}/{experiment_id}_feature_location.pkl",
+		barcode_path = "{run}/barcodes/{experiment_id}_firstPassAllBarcodes1.csv",
+		barcode_count_path = "{run}/barcodes/{experiment_id}_barcodeCounts.csv",
+		feature_location_path = "{run}/barcodes/{experiment_id}_feature_location.pkl",
 	conda:
 		"envs/samtools.yaml"
 	message:
@@ -67,10 +67,10 @@ rule extract_barcodes:
 
 rule barcode_plot:
 	input:
-		barcode_path="{run}/{experiment_id}_firstPassAllBarcodes1.csv",
-		barcode_count_path="{run}/{experiment_id}_barcodeCounts.csv"
+		barcode_path="{run}/barcodes/{experiment_id}_firstPassAllBarcodes1.csv",
+		barcode_count_path="{run}/barcodes/{experiment_id}_barcodeCounts.csv"
 	output:
-		barcode_plot = "{run}/{experiment_id}_barcodePlot.png",
+		barcode_plot = "{run}/figures/{experiment_id}_barcodePlot.png",
 	conda:
 		"envs/samtools.yaml"
 	message:
@@ -125,10 +125,11 @@ rule align_consensus:
 rule find_mutations:
 	input:
 		aligned_consensus_path="{run}/minimap2/{experiment_id}_aligned_consensus.bam",
-		feature_location_path = "{run}/{experiment_id}_feature_location.pkl"
+		feature_location_path = "{run}/barcodes/{experiment_id}_feature_location.pkl"
 	output:
-		mutation_table = "{run}/minimap2/{experiment_id}_mutation_table.csv",
-		filtered_mutation_table = "{run}/minimap2/{experiment_id}_filtered_mutation_table.csv"
+		mutation_table = "{run}/mutations/{experiment_id}_mutation_table.csv",
+		filtered_mutation_table = "{run}/mutations/{experiment_id}_filtered_mutation_table.csv",
+		by_mutation_filtered_table = "{run}/mutations/{experiment_id}_by_mutation_filtered_table.csv"
 	conda:
 		"envs/samtools.yaml"
 	message:
@@ -139,3 +140,13 @@ rule find_mutations:
 	script:
 		"py/find_mutations.py"
 
+rule mutation_statistics:
+	input:
+		filtered_mutation_table = "{run}/mutations/{experiment_id}_filtered_mutation_table.csv",
+		barcode_count_path = "{run}/barcodes/{experiment_id}_barcodeCounts.csv"
+	output:
+		mutation_stats_report = "{run}/mutations/{experiment_id}_mutation_statistics_table.csv"
+	conda:
+		"envs/samtools.yaml"
+	script:
+		"py/mutation_statistics.py"

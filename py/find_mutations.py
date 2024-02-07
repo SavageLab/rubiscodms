@@ -135,6 +135,7 @@ def main():
     # === Outputs
     mutation_table = str(snakemake.output.mutation_table)
     filtered_mutation_table = str(snakemake.output.filtered_mutation_table)
+    by_mutation_filtered_table = str(snakemake.output.by_mutation_filtered_table)
 
     # Look through consensus sequences and find mutations
     # This code might handle mutations at the edge of the read oddly, though those are less likely to be real anyway
@@ -165,28 +166,42 @@ def main():
     mutation_df = pd.DataFrame(mutation_dict).transpose().reset_index().rename(columns={'index': 'Barcode',
                                                                                         0: 'Mutation_List'})
 
-    # Dataframe operations
-    mutation_df['BackboneMut'] = mutation_df.apply(lambda row: find_backbone_mut(row, feature_location), axis=1)
+    # Apply functions to mutation_df
+    mutation_df['BackboneMut'] = mutation_df.apply(lambda row: find_backbone_mut(row), axis=1)
     mutation_df['InsertionsFound'] = mutation_df.apply(lambda row: find_insertions(row), axis=1)
     mutation_df['DeletionsFound'] = mutation_df.apply(lambda row: find_deletions(row), axis=1)
     mutation_df['PRKmut'] = mutation_df.apply(lambda row: find_prk_mut(row, feature_location), axis=1)
-    mutation_df['RbcLCodonMut'], mutation_df['originalAA'], mutation_df['AApos'], mutation_df['mutAA'] = \
-        zip(*mutation_df.apply(rbcL_mut, axis=1))
+    mutation_df['RbcLCodonMut'], mutation_df['originalAA'], mutation_df['AApos'], mutation_df['mutAA'] = zip(
+        *mutation_df.apply(rbcL_mut, axis=1))
 
-    # Writing dataframe to CSV
+    # Save mutation_df to CSV
     mutation_df.to_csv(mutation_table)
 
-    # Filtering away barcodes that break the rules
-    better_muts_df = mutation_df[~(mutation_df['BackboneMut'] |
-                                   mutation_df['DeletionsFound'] |
-                                   mutation_df['PRKmut'])]
+    # Filter away barcodes that break the rules
+    filtered_mutation_df = mutation_df[
+        (~mutation_df['BackboneMut']) &
+        (~mutation_df['InsertionsFound']) &
+        (~mutation_df['DeletionsFound']) &
+        (~mutation_df['PRKmut'])
+        ]
 
-    better_muts_df = better_muts_df[~(better_muts_df['RbcLCodonMut'].isin(['Multiple_mutations', 'Silent mutation',
-                                                                           'Ambiguous_mutation', 'Illegal_mutation']))]
+    filtered_mutation_df = filtered_mutation_df[
+        (filtered_mutation_df['RbcLCodonMut'] != 'Multiple_mutations') &
+        (filtered_mutation_df['RbcLCodonMut'] != 'Silent mutation') &
+        (filtered_mutation_df['RbcLCodonMut'] != 'Ambiguous_mutation') &
+        (filtered_mutation_df['RbcLCodonMut'] != 'Illegal_mutation')
+        ]
 
-    filtered_mutation_df = better_muts_df[better_muts_df.groupby('RbcLCodonMut')['RbcLCodonMut'].transform('size') >= 3]
-    filtered_mutation_df[['Barcode', 'RbcLCodonMut', 'originalAA', 'AApos', 'mutAA']].to_csv('NP_11_64_10_lookupTable061623.csv')
+    # Filtered dataframe
+    by_mutation_filtered_df = filtered_mutation_df[filtered_mutation_df.groupby(
+        'RbcLCodonMut')['RbcLCodonMut'].transform('size') >= 3]
 
+    # Save filtered dataframes to CSV
+    by_mutation_filtered_df[['Barcode',
+                          'RbcLCodonMut',
+                          'originalAA',
+                          'AApos',
+                          'mutAA']].to_csv(by_mutation_filtered_table)
     filtered_mutation_df.to_csv(filtered_mutation_table)
 
 
