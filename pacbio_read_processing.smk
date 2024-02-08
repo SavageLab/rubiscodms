@@ -134,7 +134,7 @@ rule find_mutations:
 		"envs/samtools.yaml"
 	message:
 		"""
-		Import aligned consensus BAM :\n {input.aligned_consensus_path}\n
+		Import aligned consensus BAM :\n {input.feature_location_path}\n {input.aligned_consensus_path}
 		Export mutation table to:\n {output.mutation_table}		
 		"""
 	script:
@@ -145,8 +145,33 @@ rule mutation_statistics:
 		filtered_mutation_table = "{run}/mutations/{experiment_id}_filtered_mutation_table.csv",
 		barcode_count_path = "{run}/barcodes/{experiment_id}_barcodeCounts.csv"
 	output:
-		mutation_stats_report = "{run}/mutations/{experiment_id}_mutation_statistics_table.csv"
+		mutation_stats_report = "{run}/mutations/{experiment_id}_mutation_statistics_table.csv",
+		barcode_per_mut_plot_output = "{run}/figures/{experiment_id}_barcode_per_mut_plot.png",
+		mutation_heatmap_output = "{run}/figures/{experiment_id}_mutation_heatmap.png"
 	conda:
 		"envs/samtools.yaml"
+	message:
+		"""
+		Import barcode and mutation data from:\n {input.filtered_mutation_table}\n {input.barcode_count_path}
+		Calculate statistics and report on:\n {output.mutation_stats_report}\n
+		"""
 	script:
 		"py/mutation_statistics.py"
+
+rule data_rarefaction:
+	input:
+		barcode_count_path = "{run}/barcodes/{experiment_id}_barcodeCounts.csv",
+	output:
+		rarefaction_plot_output = "{run}/figures/{experiment_id}_rarefaction_plot.png"
+	conda:
+		"envs/scipy.yaml"
+		# from matplotlib import pyplot as plt
+		# import numpy as np
+		# import pandas as pd
+		# from scipy.optimize import curve_fit
+	message:
+		"""
+		"""
+	script:
+		"py/data_rarefaction.py"
+

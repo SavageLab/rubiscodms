@@ -49,8 +49,7 @@ def main():
     plt.text(read_threshold + 1, plt.ylim()[1] / 10, f'Usability threshold: {read_threshold} reads', color='red')
     plt.text(read_threshold + 1, plt.ylim()[1] / 20, f'Potentially usable barcodes: {usable_barcodes_count}', color='red')
 
-    # Display the histogram
-    plt.savefig(barcode_plot, format="png", dpi=300)
+
 
 
 if __name__ == "__main__":
