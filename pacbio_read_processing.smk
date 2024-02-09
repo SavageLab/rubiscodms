@@ -5,16 +5,37 @@ configfile: "config/pacbio_read_processing.yaml"
 import glob
 
 # Cluster run template
-#nohup snakemake --snakefile dms_workflow.smk -j 5 --cluster "sbatch -t {cluster.time} -n {cluster.cores}" --cluster-config config/cluster.yaml --latency-wait 120 --use-conda &
+#nohup snakemake --snakefile pacbio_read_processing.smk -j 5 --cluster "sbatch -t {cluster.time} -n {cluster.cores}" --cluster-config config/cluster.yaml --latency-wait 120 --use-conda &
 
 # noinspection SmkAvoidTabWhitespace
 rule all:
 	input:
+		#   Minimap2 alignment
+		expand("{run}/minimap2/{experiment_id}.bam",
+			run=["run"],experiment_id=["experiment_id"]),
+		#   Extract barcodes
 		expand("{run}/barcodes/{experiment_id}_firstPassAllBarcodes1.csv",
 			run=["run"],experiment_id=["experiment_id"]),
-		expand("{run}/minimap2/{experiment_id}.bam",
-		       run=["run"], experiment_id=["experiment_id"]),
+		#   Plot barcodes
 		expand("{run}/figures/{experiment_id}_barcodePlot.png",
+			run=["run"],experiment_id=["experiment_id"]),
+		#   Recover barcode reads
+		expand("{run}/minimap2/{experiment_id}_sorted_barcode_reads.bam", 
+			run=["run"],experiment_id=["experiment_id"]),
+		#   Align consensus sequences
+		expand("{run}/minimap2/{experiment_id}_aligned_consensus.bam", 
+			run=["run"],experiment_id=["experiment_id"]),
+		#   Annotate mutations
+		expand("{run}/mutations/{experiment_id}_full_mutation_table.csv", 
+			run=["run"],experiment_id=["experiment_id"]),
+		#   Plot mutation-associated statistics
+		expand("{run}/mutations/{experiment_id}_mutation_statistics_table.csv", 
+			run=["run"],experiment_id=["experiment_id"]),
+		#   Conduct data rarefaction
+		expand("{run}/figures/{experiment_id}_rarefaction_plot.png",
+			run=["run"],experiment_id=["experiment_id"]),
+		#   Plot mutation positions
+		expand("{run}/figures/{experiment_id}_mutation_positions_negative.png", 
 			run=["run"],experiment_id=["experiment_id"]),
 
 rule minimap2_map:
@@ -88,13 +109,13 @@ rule pick_barcode_reads:
 		sorted_bam_path = "{run}/minimap2/{experiment_id}_sorted.bam",
 		bam_barcode_reads_path = "{run}/minimap2/{experiment_id}_barcode_reads.bam",
 		sorted_bam_barcode_reads_path = "{run}/minimap2/{experiment_id}_sorted_barcode_reads.bam",
-		consensus_fsata_path = "{run}/minimap2/{experiment_id}_barcode_reads.fasta"
+		consensus_fasta_path = "{run}/minimap2/{experiment_id}_barcode_reads.fasta"
 	conda:
 		"envs/samtools.yaml"
 	message:
 		"""
 		Import  BAM alignment:\n {input.bam_map_path}\n
-		Export consensus FASTA sequences to:\n {output.consensus_fsata_path}		
+		Export consensus FASTA sequences to:\n {output.consensus_fasta_path}		
 		"""
 	script:
 		"py/barcode_consensus.py"
@@ -127,7 +148,7 @@ rule find_mutations:
 		aligned_consensus_path="{run}/minimap2/{experiment_id}_aligned_consensus.bam",
 		feature_location_path = "{run}/barcodes/{experiment_id}_feature_location.pkl"
 	output:
-		mutation_table = "{run}/mutations/{experiment_id}_mutation_table.csv",
+		full_mutation_table = "{run}/mutations/{experiment_id}_full_mutation_table.csv",
 		filtered_mutation_table = "{run}/mutations/{experiment_id}_filtered_mutation_table.csv",
 		by_mutation_filtered_table = "{run}/mutations/{experiment_id}_by_mutation_filtered_table.csv"
 	conda:
@@ -135,7 +156,7 @@ rule find_mutations:
 	message:
 		"""
 		Import aligned consensus BAM :\n {input.feature_location_path}\n {input.aligned_consensus_path}
-		Export mutation table to:\n {output.mutation_table}		
+		Export mutation table to:\n {output.full_mutation_table}		
 		"""
 	script:
 		"py/find_mutations.py"
@@ -171,7 +192,22 @@ rule data_rarefaction:
 		# from scipy.optimize import curve_fit
 	message:
 		"""
+		Import barcode counts:\n {input.barcode_count_path}
+		Plot rarefaction to:\n {output.rarefaction_plot_output}
 		"""
 	script:
 		"py/data_rarefaction.py"
 
+rule plot_mutation_positions:
+	input:
+		full_mutation_table = "{run}/mutations/{experiment_id}_full_mutation_table.csv",
+	output:
+		mutation_positions_plot = "{run}/figures/{experiment_id}_mutation_positions.png",
+		mutation_positions_negative_plot = "{run}/figures/{experiment_id}_mutation_positions_negative.png"
+	conda:
+		"envs/samtools.yaml"
+	message:
+		"""
+		"""
+	script:
+		"py/plot_mutation_positions.py"

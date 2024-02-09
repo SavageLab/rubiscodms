@@ -1,0 +1,8 @@
+# Directory that stores the input data for the pipeline
+input_dir: ""
+
+# Directory where all results folders will be created
+run: ""
+
+# String prefix shared by all input files
+experiment_id: ""

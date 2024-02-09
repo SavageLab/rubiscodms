@@ -133,10 +133,9 @@ def main():
     aligned_consensus_path = str(snakemake.input.aligned_consensus_path)
     feature_location_path = str(snakemake.input.feature_location_path)
     # === Outputs
-    mutation_table = str(snakemake.output.mutation_table)
     filtered_mutation_table = str(snakemake.output.filtered_mutation_table)
     by_mutation_filtered_table = str(snakemake.output.by_mutation_filtered_table)
-
+    full_mutation_table = str(snakemake.output.full_mutation_table)
     # Look through consensus sequences and find mutations
     # This code might handle mutations at the edge of the read oddly, though those are less likely to be real anyway
     bam_file = pysam.AlignmentFile(aligned_consensus_path)
@@ -174,9 +173,6 @@ def main():
     mutation_df['RbcLCodonMut'], mutation_df['originalAA'], mutation_df['AApos'], mutation_df['mutAA'] = zip(
         *mutation_df.apply(rbcL_mut, axis=1))
 
-    # Save mutation_df to CSV
-    mutation_df.to_csv(mutation_table)
-
     # Filter away barcodes that break the rules
     filtered_mutation_df = mutation_df[
         (~mutation_df['BackboneMut']) &
@@ -203,6 +199,7 @@ def main():
                           'AApos',
                           'mutAA']].to_csv(by_mutation_filtered_table)
     filtered_mutation_df.to_csv(filtered_mutation_table)
+    mutation_df.to_csv(full_mutation_table)
 
 
 if __name__ == "__main__":
