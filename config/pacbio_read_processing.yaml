@@ -1,6 +1,8 @@
 # Directory that stores the input data for the pipeline
 input_dir: ""
 
+
+threads: 20
 # Directory where all results folders will be created
 run: ""
 

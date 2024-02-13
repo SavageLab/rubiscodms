@@ -77,7 +77,7 @@ rule extract_barcodes:
 		barcode_count_path = "{run}/barcodes/{experiment_id}_barcodeCounts.csv",
 		feature_location_path = "{run}/barcodes/{experiment_id}_feature_location.pkl",
 	conda:
-		"envs/samtools.yaml"
+		"envs/barcodes_processing.yaml"
 	message:
 		"""
 		Import feature in GenBank format:\n {input.genbank_feature_path}
@@ -93,7 +93,7 @@ rule barcode_plot:
 	output:
 		barcode_plot = "{run}/figures/{experiment_id}_barcodePlot.png",
 	conda:
-		"envs/samtools.yaml"
+		"envs/barcodes_processing.yaml"
 	message:
 		"""
 		Import  barcode tables:\n {input.barcode_path}\n {input.barcode_count_path}
@@ -111,7 +111,7 @@ rule pick_barcode_reads:
 		sorted_bam_barcode_reads_path = "{run}/minimap2/{experiment_id}_sorted_barcode_reads.bam",
 		consensus_fasta_path = "{run}/minimap2/{experiment_id}_barcode_reads.fasta"
 	conda:
-		"envs/samtools.yaml"
+		"envs/barcodes_processing.yaml"
 	message:
 		"""
 		Import  BAM alignment:\n {input.bam_map_path}\n
@@ -130,7 +130,7 @@ rule align_consensus:
 	params:
 		sam_consensus = "{run}/minimap2/{experiment_id}_aligned_consensus.sam"
 	conda:
-		"envs/samtools.yaml"
+		"envs/barcodes_processing.yaml"
 	message:
 		"""
 		Import consensus barcode FASTA:\n {input.consensus_fasta_path}\n
@@ -152,7 +152,7 @@ rule find_mutations:
 		filtered_mutation_table = "{run}/mutations/{experiment_id}_filtered_mutation_table.csv",
 		by_mutation_filtered_table = "{run}/mutations/{experiment_id}_by_mutation_filtered_table.csv"
 	conda:
-		"envs/samtools.yaml"
+		"envs/barcodes_processing.yaml"
 	message:
 		"""
 		Import aligned consensus BAM :\n {input.feature_location_path}\n {input.aligned_consensus_path}
@@ -170,7 +170,7 @@ rule mutation_statistics:
 		barcode_per_mut_plot_output = "{run}/figures/{experiment_id}_barcode_per_mut_plot.png",
 		mutation_heatmap_output = "{run}/figures/{experiment_id}_mutation_heatmap.png"
 	conda:
-		"envs/samtools.yaml"
+		"envs/barcodes_processing.yaml"
 	message:
 		"""
 		Import barcode and mutation data from:\n {input.filtered_mutation_table}\n {input.barcode_count_path}
@@ -205,7 +205,7 @@ rule plot_mutation_positions:
 		mutation_positions_plot = "{run}/figures/{experiment_id}_mutation_positions.png",
 		mutation_positions_negative_plot = "{run}/figures/{experiment_id}_mutation_positions_negative.png"
 	conda:
-		"envs/samtools.yaml"
+		"envs/barcodes_processing.yaml"
 	message:
 		"""
 		"""
