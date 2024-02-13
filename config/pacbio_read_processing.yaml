@@ -1,10 +1,9 @@
 # Directory that stores the input data for the pipeline
-input_dir: ""
-
+input_dir: "input_data_pacbio"
 
 threads: 20
 # Directory where all results folders will be created
-run: ""
+run: "rubisco_reads_processing"
 
 # String prefix shared by all input files
-experiment_id: ""
+experiment_id: "np_11_64_10_ScaI"

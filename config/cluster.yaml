@@ -7,6 +7,10 @@ iterative_search:
   time: '18:00:00'
   cores: 20
 
+protein_to_locus:
+  time: '7:00:00'
+  cores: 20
+
 taxid_parse:
   time: '16:00:00'
   cores: 2
