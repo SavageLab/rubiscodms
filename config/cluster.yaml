@@ -22,3 +22,7 @@ phydms:
 realignment:
   time: '30:00:00'
   cores: 20
+
+pick_barcode_reads:
+  time: '40:00:00'
+  cores: 20

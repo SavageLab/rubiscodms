@@ -10,26 +10,25 @@ import pandas as pd
 def main():
     # Snakemake I/O
     # === Inputs
-    bam_mapping_path = str(snakemake.input.bam_map_path)
+    barcode_path = str(snakemake.input.barcode_path)
+    sorted_bam_path = str(snakemake.input.sorted_bam_path)
     # === Outputs
-    sorted_bam_path = str(snakemake.output.sorted_bam_path)
     bam_barcode_reads_path = str(snakemake.output.bam_barcode_reads_path)
-    sorted_bam_barcode_reads_path = str(snakemake.output.sorted_bam_barcode_reads_path)
-    consensus_fasta_path = str(snakemake.output.consensus_fsata_path)
+    consensus_fasta_path = str(snakemake.output.consensus_fasta_path)
 
     # Import barcode tables
-    barcode_dataframe = pd.read_csv(bam_mapping_path)
+    barcode_dataframe = pd.read_csv(barcode_path)
 
     # DEBUG
     # bam_mapping_path = 'NP_11_64_10_PacBio_ScaI_index.bam'
 
     # Sorting the BAM file is a prerequisite for indexing, which facilitates efficient data retrieval
-    pysam.sort("-o", sorted_bam_path, bam_mapping_path)
+    # pysam.sort("-o", sorted_bam_path, bam_mapping_path)
 
     # Index the BAM file to enable fast random access
     # This step creates an index file (.bai) associated with the BAM file
     # The index file is crucial for many downstream analyses that require querying specific genomic regions
-    pysam.index(sorted_bam_path)
+    # pysam.index(sorted_bam_path)
 
     # Open the indexed BAM file using pysam.AlignmentFile
     # This allows us to work with the alignments in the BAM file programmatically
@@ -56,13 +55,10 @@ def main():
                     for read_name in barcode_reads['Read_Name']:
                         try:
                             # Find the read in the indexed BAM file and write to the temporary BAM
-                            for alignment in indexed_bam_file.fetch(read_name):
+                            for alignment in indexed_bam_file.find(read_name):
                                 temp_bam.write(alignment)
                         except Exception as e:
                             raise Exception(f"Error processing read {read_name}: {e}")
-
-                # Sort the temporary BAM file
-                pysam.sort("-o", bam_barcode_reads_path, sorted_bam_barcode_reads_path)
 
                 # Write the barcode as the header in the FASTA file
                 # seq_record = SeqIO.SeqRecord(id=barcode, seq=)
@@ -70,7 +66,7 @@ def main():
 
                 # Generate the consensus sequence using samtools
                 try:
-                    consensus_cmd = f'samtools consensus -l 100000 --config hifi {sorted_bam_barcode_reads_path}'
+                    consensus_cmd = f'samtools consensus -l 100000 --config hifi {sorted_bam_path}'
                     consensus_result = os.popen(consensus_cmd).read()
                     consensus_sequence = consensus_result.split()[1]
                     # Write the barcode as the header in the FASTA file

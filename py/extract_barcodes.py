@@ -13,7 +13,7 @@ def main():
 	# == Define the path to the GenBank file
 	genbank_feature_path = str(snakemake.input.genbank_feature_path)
 	# == Define the path to the SAM file containing alignment data
-	alignment_file_path = str(snakemake.input.alignment_file_path)
+	alignment_file_path = str(snakemake.input.bam_map_path)
 	# Outputs
 	output_barcode_path = str(snakemake.output.barcode_path)
 	output_barcode_count_path = str(snakemake.output.barcode_count_path)

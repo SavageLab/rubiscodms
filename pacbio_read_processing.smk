@@ -45,7 +45,8 @@ rule minimap2_map:
 		p1 = lambda wildcards: glob.glob("{in_dir}/{experiment_id}_pacbio.fastq".format(
 			in_dir=config['input_dir'], experiment_id=wildcards.experiment_id))
 	output:
-		bam_map_path = "{run}/minimap2/{experiment_id}.bam"
+		bam_map_path = "{run}/minimap2/{experiment_id}.bam",
+		sorted_bam_path= "{run}/samtools/{experiment_id}_sorted.bam",
 	conda:
 		"envs/mapping.yaml"
 	params:
@@ -64,7 +65,9 @@ Mapped Output:
 	shell:
 		"""
 		minimap2 --MD -Lax map-pb {input.fasta_feature_path} {input.p1} > {params.sam_map} 
-		samtools view -bT {input.fasta_feature_path} {params.sam_map} > {output.bam_map_path}
+		samtools view -@ {threads} -bT {input.fasta_feature_path} {params.sam_map} > {output.bam_map_path}
+		samtools sort -@ {threads} {output.bam_map_path} -o {output.sorted_bam_path}
+		samtools index -@ {threads} -b {output.sorted_bam_path}
 		rm {params.sam_map}
 		"""
 
@@ -72,7 +75,8 @@ rule extract_barcodes:
 	input:
 		genbank_feature_path = lambda wildcards: glob.glob("{in_dir}/{experiment_id}_index.gb".format(
 			in_dir=config['input_dir'],
-			experiment_id=wildcards.experiment_id))
+			experiment_id=wildcards.experiment_id)),
+		bam_map_path = "{run}/minimap2/{experiment_id}.bam"
 	output:
 		barcode_path = "{run}/barcodes/{experiment_id}_firstPassAllBarcodes1.csv",
 		barcode_count_path = "{run}/barcodes/{experiment_id}_barcodeCounts.csv",
@@ -87,7 +91,7 @@ Export barcode tables to:\n {output.barcode_path}\n {output.barcode_count_path}
 		"""
 	script:
 		"py/extract_barcodes.py"
-#
+
 rule barcode_plot:
 	input:
 		barcode_path="{run}/barcodes/{experiment_id}_firstPassAllBarcodes1.csv",
@@ -95,7 +99,7 @@ rule barcode_plot:
 	output:
 		barcode_plot = "{run}/figures/{experiment_id}_barcodePlot.png",
 	conda:
-		"envs/barcodes_processing.yaml"
+		"envs/data_handling.yaml"
 	message:
 		"""
 rule: barcode_plot 		
@@ -107,18 +111,17 @@ Export barcode usability plot to:\n {output.barcode_plot}
 
 rule pick_barcode_reads:
 	input:
-		bam_map_path = "{run}/minimap2/{experiment_id}.bam",
+		barcode_path= "{run}/barcodes/{experiment_id}_firstPassAllBarcodes1.csv",
+		sorted_bam_path= "{run}/samtools/{experiment_id}_sorted.bam"
 	output:
-		sorted_bam_path = "{run}/samtools/{experiment_id}_sorted.bam",
 		bam_barcode_reads_path = "{run}/samtools/{experiment_id}_barcode_reads.bam",
-		sorted_bam_barcode_reads_path = "{run}/samtools/{experiment_id}_sorted_barcode_reads.bam",
 		consensus_fasta_path = "{run}/samtools/{experiment_id}_barcode_reads.fasta"
 	conda:
 		"envs/barcodes_processing.yaml"
 	message:
 		"""
 rule: pick_barcode_reads
-Import  BAM alignment:\n {input.bam_map_path}\n
+Import  BAM alignment:\n {input.sorted_bam_path}\n
 Export consensus FASTA sequences to:\n {output.consensus_fasta_path}
 		"""
 	script:
@@ -134,7 +137,7 @@ rule align_consensus:
 	params:
 		sam_consensus = "{run}/samtools/{experiment_id}_aligned_consensus.sam"
 	conda:
-		"envs/barcodes_processing.yaml"
+		"envs/mapsam.yaml"
 	message:
 		"""
 rule: align_consensus 		
@@ -176,7 +179,7 @@ rule mutation_statistics:
 		barcode_per_mut_plot_output = "{run}/figures/{experiment_id}_barcode_per_mut_plot.png",
 		mutation_heatmap_output = "{run}/figures/{experiment_id}_mutation_heatmap.png"
 	conda:
-		"envs/barcodes_processing.yaml"
+		"envs/data_handling.yaml"
 	message:
 		"""
 rule: mutation_statistics
@@ -213,7 +216,7 @@ rule plot_mutation_positions:
 		mutation_positions_plot = "{run}/figures/{experiment_id}_mutation_positions.png",
 		mutation_positions_negative_plot = "{run}/figures/{experiment_id}_mutation_positions_negative.png"
 	conda:
-		"envs/barcodes_processing.yaml"
+		"envs/data_handling.yaml"
 	message:
 		"""
 rule: plot_mutation_positions		
