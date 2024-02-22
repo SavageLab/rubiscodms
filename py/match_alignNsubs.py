@@ -15,6 +15,7 @@ def main():
 	matched_alignments = str(snakemake.output.matched_msa)
 	# Params
 	position_col = str(snakemake.params.position_col)
+	site_offset = int(snakemake.params.site_offset)
 
 	# DEBUG INPUT
 	# dms_data = "/groups/doudna/projects/daniel_projects/prywes_n/pgym_input_data/YAP1_HUMAN_Araya_2012.csv"
@@ -27,7 +28,7 @@ def main():
 
 	# === Import Substitution Tables ===
 	df = pd.read_csv(dms_data)
-	(site_min, site_max) = ((df[position_col].astype(int).min() * 3) - 2, (df[position_col].astype(int).max() * 3))
+	(site_min, site_max) = ((df[position_col].astype(int).min() * 3) - site_offset, (df[position_col].astype(int).max() * 3))
 	print(f"The positions found on the DMS range from {site_min} to {site_max}")
 	# === Import Reference
 	refseq = SeqIO.read(open(refseq_path), "fasta")

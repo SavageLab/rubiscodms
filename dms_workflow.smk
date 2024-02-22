@@ -1,7 +1,8 @@
 # **** Variables ****
 # configfile: "config/prywes_dms.yaml"
 # configfile: "config/prywes_pgym_dms.yaml"
-configfile: "config/prywes_form2_dms.yaml"
+# configfile: "config/prywes_form2_dms.yaml"
+configfile: "config/prywes_dms.yaml"
 
 # **** Imports ****
 import glob
@@ -14,11 +15,12 @@ rule all:
 	input:
 		expand("{run}_{min_ident}/{experiment_id}/processed_inputs/aa_preference.csv",run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/figures/aa_preference.pdf", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
-		expand("{run}_{min_ident}/{experiment_id}/figures/aa_preference.png", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
+		# expand("{run}_{min_ident}/{experiment_id}/figures/aa_preference.png", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/processed_inputs/nt_alignment_msa.fna", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/processed_inputs/matched_nt_alignment_msa.fna", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/rax_tree/RAxML_bestTree.nt_tree.newick", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
-		expand("{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_modelcomparison.md", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"])
+		expand("{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_modelcomparison.md", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
+		expand("{run}_{min_ident}/{experiment_id}/figures/{experiment_id}_logplot_omegabysite.pdf", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"])
 
 # noinspection SmkAvoidTabWhitespace
 rule convert_enrichment:
@@ -44,17 +46,17 @@ rule convert_enrichment:
 		"py/enrichm2aa-preference.py"
 
 # noinspection SmkAvoidTabWhitespace
-rule inspect_prefs:
-	input:
-		dms_prefs = "{run}_{min_ident}/{experiment_id}/processed_inputs/aa_preference.csv",
-	output:
-		radial_prefs = "{run}_{min_ident}/{experiment_id}/figures/aa_preference.png"
-	params:
-		site_offset = config["site_offset"]
-	conda:
-		"envs/dms.yaml"
-	script:
-		"py/inspect_prefs.py"
+# rule inspect_prefs:
+# 	input:
+# 		dms_prefs = "{run}_{min_ident}/{experiment_id}/processed_inputs/aa_preference.csv",
+# 	output:
+# 		radial_prefs = "{run}_{min_ident}/{experiment_id}/figures/aa_preference.png"
+# 	params:
+# 		site_offset = config["site_offset"]
+# 	conda:
+# 		"envs/dms.yaml"
+# 	script:
+# 		"py/inspect_prefs.py"
 
 # noinspection SmkAvoidTabWhitespace
 rule aa_preference_logo:
@@ -99,13 +101,14 @@ rule match_alignment_to_sub:
 	input:
 		dms_data = lambda wildcards: glob.glob("{in_dir}/{experiment_id}.csv".format(
 			in_dir=config['input_dir'], experiment_id=wildcards.experiment_id)),
-		refseq = lambda wildcards: glob.glob("{in_dir}/fasta/{reference_seq}.fasta".format(in_dir=config['input_dir'],
+		refseq = lambda wildcards: glob.glob("{in_dir}/fasta/{reference_seq}.fna".format(in_dir=config['input_dir'],
 			reference_seq=config["reference_seq"][wildcards.experiment_id])),
 		msa = "{run}_{min_ident}/{experiment_id}/processed_inputs/nt_alignment_msa.fna",
 	output:
 		matched_msa = "{run}_{min_ident}/{experiment_id}/processed_inputs/matched_nt_alignment_msa.fna"
 	params:
 		position_col = config["position_col"],
+		site_offset = config["site_offset"],
 	conda:
 		"envs/dms.yaml"
 	script:
@@ -136,13 +139,26 @@ rule phydms:
 		matched_msa = "{run}_{min_ident}/{experiment_id}/processed_inputs/matched_nt_alignment_msa.fna",
 		dms_prefs = "{run}_{min_ident}/{experiment_id}/processed_inputs/aa_preference.csv"
 	output:
-		dms_models = "{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_modelcomparison.md"
+		dms_models = "{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_modelcomparison.md",
+		omega_by_site = "{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_ExpCM_aa_preference_omegabysite.txt"
 	params:
 		outdir = "{run}_{min_ident}/{experiment_id}/phydmsresults",
-		outprefix = "phydms_run_"
+		outprefix = "phydms_run"
 	conda:
 		"envs/rax.yaml"
 	threads:
 		config["threads"]
 	shell:
 		"phydms_comprehensive --omegabysite --diffprefsbysite --tree {input.phylo_tree} --ncpus {threads} {params.outdir}/{wildcards.experiment_id} {input.matched_msa} {input.dms_prefs}"
+
+# noinspection SmkAvoidTabWhitespace
+rule phydms_omega_inspection:
+	input:
+		omega_by_site = "{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_ExpCM_aa_preference_omegabysite.txt",
+		dms_prefs = "{run}_{min_ident}/{experiment_id}/processed_inputs/aa_preference.csv"
+	output:
+		omega_logplot = "{run}_{min_ident}/{experiment_id}/figures/{experiment_id}_logplot_omegabysite.pdf"
+	conda:
+		"envs/rax.yaml"
+	shell:
+		"phydms_logoplot {output.omega_logplot} --prefs {input.dms_prefs} --omegabysite {input.omega_by_site} –minP 0.001"
