@@ -2,13 +2,13 @@
 # configfile: "config/prywes_dms.yaml"
 # configfile: "config/prywes_pgym_dms.yaml"
 # configfile: "config/prywes_form2_dms.yaml"
-configfile: "config/prywes_dms.yaml"
+# configfile: "config/prywes_dms.yaml"
 
 # **** Imports ****
 import glob
 
 # Cluster run template
-#nohup snakemake --snakefile dms_workflow.smk -j 5 --cluster "sbatch -t {cluster.time} -n {cluster.cores}" --cluster-config config/cluster.yaml --latency-wait 120 --use-conda &
+#nohup snakemake --snakefile dms_workflow.smk -j 5 --cluster "sbatch -t {cluster.time} -n {cluster.cores}" --cluster-config config/cluster.yaml --latency-wait 120 --use-conda --configfile config/prywes_form2_3.yaml &
 
 # noinspection SmkAvoidTabWhitespace
 rule all:

@@ -1,0 +1,23 @@
+# Folder where input data is stored
+input_dir: "/groups/doudna/projects/daniel_projects/prywes_n/input_data/form2_form3"
+
+threads: 20
+
+# File directory where files will be stored in
+run: "/groups/doudna/projects/daniel_projects/prywes_n/form2_form3"
+
+min_ident: ['0.0', '0.60']
+site_offset: 2
+
+reference_seq:
+  'form2_form3': 'WP_011390153.1'
+
+#reference_fasta:
+#  'form2_form3': "fasta/WP_011390153.1.fna"
+
+rax_path: "raxmlHPC-PTHREADS-SSE3"
+
+# Column names as displayed in the dms table
+position_col: "Site"
+enrichment_col: "5percent_CO2_20uM_IPTG"
+aminoacid_col: "AminoAcid"
