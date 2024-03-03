@@ -16,7 +16,7 @@ taxid_parse:
   cores: 2
 
 phydms:
-  time: '8:00:00'
+  time: '30:00:00'
   cores: 20
 
 realignment:
