@@ -44,10 +44,13 @@ def main():
 
     # Open the template BAM file for reading
     with pysam.AlignmentFile(sorted_bam_path, 'rb') as template_bam:
+        # DEBUG
+        count = 0
         # Open the output FASTA file for writing
         with open(consensus_fasta_path, 'w') as output_fasta:
             # Process each barcode
             for barcode in barcode_list:
+                count += 1
                 # Retrieve reads associated with the current barcode
                 barcode_reads = barcode_dataframe[barcode_dataframe['Barcode'] == barcode]
                 # Create a temporary BAM file to store reads for the current barcode
@@ -57,9 +60,16 @@ def main():
                             # Find the read in the indexed BAM file and write to the temporary BAM
                             for alignment in indexed_bam_file.find(read_name):
                                 temp_bam.write(alignment)
+                                if count == 5:
+                                    break
                         except Exception as e:
                             raise Exception(f"Error processing read {read_name}: {e}")
-
+                        else:
+                            continue
+                        break
+                    else:
+                        continue
+                    break
                 # Write the barcode as the header in the FASTA file
                 # seq_record = SeqIO.SeqRecord(id=barcode, seq=)
                 # output_fasta.write(f'>{barcode}\n')
