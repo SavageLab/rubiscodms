@@ -149,7 +149,7 @@ rule phydms:
 	threads:
 		config["threads"]
 	shell:
-		"phydms_comprehensive --omegabysite --diffprefsbysite --tree {input.phylo_tree} --ncpus {threads} {params.outdir}/{wildcards.experiment_id} {input.matched_msa} {input.dms_prefs}"
+		"phydms_comprehensive --omegabysite --tree {input.phylo_tree} --ncpus {threads} {params.outdir}/{wildcards.experiment_id} {input.matched_msa} {input.dms_prefs}"
 
 # noinspection SmkAvoidTabWhitespace
 rule phydms_omega_inspection:
