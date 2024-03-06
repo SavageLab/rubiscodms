@@ -131,6 +131,8 @@ def ptn_to_nuc(id_list, db_name):
 					time.sleep(10)
 				else:
 					continue  # Re-raise other HTTP errors
+			except RuntimeError:
+				continue
 			except urllib.error.URLError:
 				continue
 		# try:
