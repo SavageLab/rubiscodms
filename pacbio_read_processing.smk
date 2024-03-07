@@ -112,16 +112,19 @@ Export barcode usability plot to:\n {output.barcode_plot}
 rule pick_barcode_reads:
 	input:
 		barcode_path= "{run}/barcodes/{experiment_id}_firstPassAllBarcodes1.csv",
+		barcode_count_path = "{run}/barcodes/{experiment_id}_barcodeCounts.csv",
 		sorted_bam_path= "{run}/samtools/{experiment_id}_sorted.bam"
 	output:
 		bam_barcode_reads_path = "{run}/samtools/{experiment_id}_barcode_reads.bam",
 		consensus_fasta_path = "{run}/samtools/{experiment_id}_barcode_reads.fasta"
+	params:
+		sorted_barcode_reads_path = "{run}/samtools/{experiment_id}_barcode_reads_sorted.bam"
 	conda:
 		"envs/barcodes_processing.yaml"
 	message:
 		"""
 rule: pick_barcode_reads
-Import  BAM alignment:\n {input.sorted_bam_path}\n
+Import  BAM alignment:\n {input.sorted_bam_path}
 Export consensus FASTA sequences to:\n {output.consensus_fasta_path}
 		"""
 	script:
