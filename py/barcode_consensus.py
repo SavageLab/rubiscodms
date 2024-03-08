@@ -14,7 +14,7 @@ def main():
     barcode_count_path = str(snakemake.input.barcode_count_path)
     sorted_bam_path = str(snakemake.input.sorted_bam_path)
     # === Params
-    sorted_barcode_reads_path = str(snakemake.input.sorted_barcode_reads_path)
+    sorted_barcode_reads_path = str(snakemake.params.sorted_barcode_reads_path)
     # === Outputs
     bam_barcode_reads_path = str(snakemake.output.bam_barcode_reads_path)
     consensus_fasta_path = str(snakemake.output.consensus_fasta_path)
