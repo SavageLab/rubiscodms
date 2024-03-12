@@ -166,7 +166,7 @@ def main():
                                                                                         0: 'Mutation_List'})
 
     # Apply functions to mutation_df
-    mutation_df['BackboneMut'] = mutation_df.apply(lambda row: find_backbone_mut(row), axis=1)
+    mutation_df['BackboneMut'] = mutation_df.apply(lambda row: find_backbone_mut(row, feature_location), axis=1)
     mutation_df['InsertionsFound'] = mutation_df.apply(lambda row: find_insertions(row), axis=1)
     mutation_df['DeletionsFound'] = mutation_df.apply(lambda row: find_deletions(row), axis=1)
     mutation_df['PRKmut'] = mutation_df.apply(lambda row: find_prk_mut(row, feature_location), axis=1)
