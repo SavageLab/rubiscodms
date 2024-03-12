@@ -26,7 +26,7 @@ def parse_arguments():
 	                    help='Path to a single column list of RefSeq IDs containing a header line (column name)')  # positional argument
 	parser.add_argument('-l',
 						dest='nuc_id_list',
-						default='',
+						default=None,
 						help='Path to intermediate file containing a nuccore id list processed in a previous run (column name)')
 	parser.add_argument('login',
 	                    help='Entrez login')
@@ -180,6 +180,7 @@ def nuc_to_gb(uid_list):
 			try:
 				handle = Entrez.efetch(db="nucleotide", id=f"{uid}", rettype = 'gbwithparts', retmode="text")
 				record = SeqIO.read(handle, "genbank")
+				print(f"Retrieved {len(uid)}")
 				gb_records.setdefault(uid, record)
 			except urllib.error.HTTPError as e:
 				if e.code == 429:  # HTTP 429: Too Many Requests
@@ -279,6 +280,7 @@ def main():
 	print(f"Entrez login: {entrez_login}")
 	Entrez.email = entrez_login
 
+	print(f"Evaluate filepath {nuc_uid_list_path}")
 	if not nuc_uid_list_path:
 		# Query NCBI to get nuccore UIDs associated with the protein hits using ESearch/ELink
 		print("Linking protein hit ids to Nuccore entries")
@@ -287,7 +289,8 @@ def main():
 		with open(f"{output_path}_nuc_id_list.pkl", 'wb') as nuc_id_handle:
 			pickle.dump(nuc_process, nuc_id_handle)
 			print(f"Exported pickle dump intermediate to {output_path}_nuc_id_list.pkl")
-	elif nuc_uid_list_path:
+	if nuc_uid_list_path:
+		print(f"Using pickle dump intermediate {nuc_uid_list_path}")
 		with open(nuc_uid_list_path, 'rb') as nuc_id_handle:
 			nuc_uid_list, hit_to_link, hits_not_found = pickle.load(nuc_id_handle)
 
