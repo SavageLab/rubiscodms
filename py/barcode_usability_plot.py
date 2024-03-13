@@ -8,8 +8,8 @@ from matplotlib import pyplot as plt
 def main():
     # Snakemake I/O
     # === Inputs
-    barcode_path = str(snakemake.input.output_barcode_path)
-    barcode_count_path = str(snakemake.input.output_barcode_count_path)
+    barcode_path = str(snakemake.input.barcode_path)
+    barcode_count_path = str(snakemake.input.barcode_count_path)
     # === Outputs
     barcode_plot = str(snakemake.output.barcode_plot)
 
@@ -49,7 +49,7 @@ def main():
     plt.text(read_threshold + 1, plt.ylim()[1] / 10, f'Usability threshold: {read_threshold} reads', color='red')
     plt.text(read_threshold + 1, plt.ylim()[1] / 20, f'Potentially usable barcodes: {usable_barcodes_count}', color='red')
 
-
+    plt.savefig(barcode_plot)
 
 
 if __name__ == "__main__":

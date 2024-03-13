@@ -171,7 +171,7 @@ def main():
     mutation_df['DeletionsFound'] = mutation_df.apply(lambda row: find_deletions(row), axis=1)
     mutation_df['PRKmut'] = mutation_df.apply(lambda row: find_prk_mut(row, feature_location), axis=1)
     mutation_df['RbcLCodonMut'], mutation_df['originalAA'], mutation_df['AApos'], mutation_df['mutAA'] = zip(
-        *mutation_df.apply(rbcL_mut, axis=1))
+        *mutation_df.apply(rbcL_mut, args=(feature_location,), axis=1))
 
     # Filter away barcodes that break the rules
     filtered_mutation_df = mutation_df[
