@@ -20,7 +20,7 @@ rule all:
 		expand("{run}_{min_ident}/{experiment_id}/processed_inputs/matched_nt_alignment_msa.fna", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/rax_tree/RAxML_bestTree.nt_tree.newick", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_modelcomparison.md", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
-		expand("{run}_{min_ident}/{experiment_id}/figures/{experiment_id}_logplot_omegabysite.pdf", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
+		# expand("{run}_{min_ident}/{experiment_id}/figures/{experiment_id}_logplot_omegabysite.pdf", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/figures/{experiment_id}_summary_omegabysite.png", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 
 # noinspection SmkAvoidTabWhitespace
@@ -153,16 +153,16 @@ rule phydms:
 		"phydms_comprehensive --omegabysite --tree {input.phylo_tree} --ncpus {threads} {params.outdir}/{wildcards.experiment_id} {input.matched_msa} {input.dms_prefs}"
 
 # noinspection SmkAvoidTabWhitespace
-rule phydms_omega_inspection:
-	input:
-		omega_by_site = "{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_ExpCM_aa_preference_omegabysite.txt",
-		dms_prefs = "{run}_{min_ident}/{experiment_id}/processed_inputs/aa_preference.csv"
-	output:
-		omega_logplot = "{run}_{min_ident}/{experiment_id}/figures/{experiment_id}_logplot_omegabysite.pdf"
-	conda:
-		"envs/rax.yaml"
-	shell:
-		"phydms_logoplot {output.omega_logplot} --prefs {input.dms_prefs} --omegabysite {input.omega_by_site} -–minP 0.001"
+# rule phydms_omega_inspection:
+# 	input:
+# 		omega_by_site = "{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_ExpCM_aa_preference_omegabysite.txt",
+# 		dms_prefs = "{run}_{min_ident}/{experiment_id}/processed_inputs/aa_preference.csv"
+# 	output:
+# 		omega_logplot = "{run}_{min_ident}/{experiment_id}/figures/{experiment_id}_logplot_omegabysite.pdf"
+# 	conda:
+# 		"envs/rax.yaml"
+# 	shell:
+# 		"phydms_logoplot {output.omega_logplot} --prefs {input.dms_prefs} --omegabysite {input.omega_by_site}"
 
 # noinspection SmkAvoidTabWhitespace
 rule phydms_by_model_summary:

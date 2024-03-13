@@ -139,7 +139,6 @@ def main():
 	# break
 	# Adjust legend outside of the for loop
 	# plt.legend(loc='upper right')
-	plt.show()
 
 	plt.savefig(models_summary_plot)
 
