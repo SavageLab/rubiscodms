@@ -11,8 +11,8 @@ def main():
 	# Snakemake I/O
 	# === Inputs
 	filtered_mutation_table = str(snakemake.input.filtered_mutation_table)
-	by_mutation_filtered_table = str(snakemake.input.by_mutation_filtered_table)
 	barcode_count_path = str(snakemake.input.barcode_count_path)
+	by_mutation_filtered_table = str(snakemake.input.by_mutation_filtered_table)
 	# === Outputs
 	mutation_stats_report = str(snakemake.output.mutation_stats_report)
 	barcode_per_mut_plot_output = str(snakemake.output.barcode_per_mut_plot_output)
@@ -25,8 +25,8 @@ def main():
 	by_mut_filtered_df = pd.read_csv(by_mutation_filtered_table)
 
 	# Calculate statistics
-	usable_reads = bc_counts_df[bc_counts_df['Barcode'].isin(by_mut_filtered_df['Barcode'])]['count'].sum()
-	total_reads = bc_counts_df['count'].sum()
+	usable_reads = bc_counts_df[bc_counts_df['Barcode'].isin(by_mut_filtered_df['Barcode'])]['Counts'].sum()
+	total_reads = bc_counts_df['Counts'].sum()
 	usable_reads_perc = str(100 * usable_reads / total_reads)[:5]
 
 	total_mut_with_bc = filtered_mut_df['RbcLCodonMut'].nunique()
@@ -35,7 +35,7 @@ def main():
 
 	# Calculate mutations with at least three barcodes
 	total_mut_bc_counts = pd.DataFrame(by_mut_filtered_df.groupby('RbcLCodonMut').size()).reset_index().rename(
-		columns={"0": "HowManyBarcodes"})
+		columns={0: "HowManyBarcodes"})
 	total_mut_with_3_or_more_bc = total_mut_bc_counts[total_mut_bc_counts['HowManyBarcodes'] >= 3]
 	total_mut_with_3_or_more_bc_perc = str(100 * len(total_mut_with_3_or_more_bc) / expected_mutations)[:5]
 
@@ -68,7 +68,7 @@ def main():
 	# === SCATTER PLOT ===
 	# Group mutations by amino acid position and count unique mutations
 	pos_vs_muts = pd.DataFrame(by_mut_filtered_df.groupby('AApos').apply(lambda x: x.RbcLCodonMut.nunique())) \
-		.reset_index().rename(columns={"RbcLCodonMut": "mutsAtPos"})
+		.reset_index().rename(columns={0: "mutsAtPos"})
 
 	# Count barcodes by position
 	mutation_bcs_by_position = by_mut_filtered_df.groupby('AApos')['Barcode'].count()

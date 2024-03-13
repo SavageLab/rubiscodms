@@ -176,10 +176,12 @@ Export mutation table to:\n {output.full_mutation_table}
 rule mutation_statistics:
 	input:
 		filtered_mutation_table = "{run}/mutations/{experiment_id}_filtered_mutation_table.csv",
-		barcode_count_path = "{run}/barcodes/{experiment_id}_barcodeCounts.csv"
+		barcode_count_path = "{run}/barcodes/{experiment_id}_barcodeCounts.csv",
+		by_mutation_filtered_table= "{run}/mutations/{experiment_id}_by_mutation_filtered_table.csv"
 	output:
 		mutation_stats_report = "{run}/mutations/{experiment_id}_mutation_statistics_table.csv",
 		barcode_per_mut_plot_output = "{run}/figures/{experiment_id}_barcode_per_mut_plot.png",
+		barcode_scatter_output = "{run}/figures/{experiment_id}_mutation_scatter.png",
 		mutation_heatmap_output = "{run}/figures/{experiment_id}_mutation_heatmap.png"
 	conda:
 		"envs/data_handling.yaml"
@@ -195,6 +197,7 @@ Calculate statistics and report on:\n {output.mutation_stats_report}\n
 rule data_rarefaction:
 	input:
 		barcode_count_path = "{run}/barcodes/{experiment_id}_barcodeCounts.csv",
+		by_mutation_filtered_table= "{run}/mutations/{experiment_id}_by_mutation_filtered_table.csv"
 	output:
 		rarefaction_plot_output = "{run}/figures/{experiment_id}_rarefaction_plot.png"
 	conda:
