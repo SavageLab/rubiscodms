@@ -20,7 +20,8 @@ rule all:
 		expand("{run}_{min_ident}/{experiment_id}/processed_inputs/matched_nt_alignment_msa.fna", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/rax_tree/RAxML_bestTree.nt_tree.newick", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 		expand("{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_modelcomparison.md", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
-		expand("{run}_{min_ident}/{experiment_id}/figures/{experiment_id}_logplot_omegabysite.pdf", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"])
+		expand("{run}_{min_ident}/{experiment_id}/figures/{experiment_id}_logplot_omegabysite.pdf", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
+		expand("{run}_{min_ident}/{experiment_id}/figures/{experiment_id}_summary_omegabysite.png", run=config["run"],experiment_id=config["reference_seq"],min_ident=config["min_ident"]),
 
 # noinspection SmkAvoidTabWhitespace
 rule convert_enrichment:
@@ -161,4 +162,17 @@ rule phydms_omega_inspection:
 	conda:
 		"envs/rax.yaml"
 	shell:
-		"phydms_logoplot {output.omega_logplot} --prefs {input.dms_prefs} --omegabysite {input.omega_by_site} –minP 0.001"
+		"phydms_logoplot {output.omega_logplot} --prefs {input.dms_prefs} --omegabysite {input.omega_by_site} -–minP 0.001"
+
+# noinspection SmkAvoidTabWhitespace
+rule phydms_by_model_summary:
+	input:
+		phydms_root_anchor = "{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}_ExpCM_aa_preference_omegabysite.txt",
+	output:
+		models_summary_plot = "{run}_{min_ident}/{experiment_id}/figures/{experiment_id}_summary_omegabysite.png"
+	params:
+		phydms_root_path = "{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}"
+	conda:
+		"envs/pyplot.yaml"
+	script:
+		"py/analyze_omegabysite.py"
