@@ -8,7 +8,7 @@
 import glob
 
 # Cluster run template
-#nohup snakemake --snakefile dms_workflow.smk -j 5 --cluster "sbatch -t {cluster.time} -n {cluster.cores}" --cluster-config config/cluster.yaml --latency-wait 120 --use-conda --configfile config/prywes_form2_3.yaml &
+#nohup snakemake --snakefile dms_workflow.smk -j 5 --cluster "sbatch -t {cluster.time} -n {cluster.cores}" --cluster-config config/cluster.yaml --latency-wait 120 --use-conda --configfile config/prywes_dms.yaml &
 
 # noinspection SmkAvoidTabWhitespace
 rule all:

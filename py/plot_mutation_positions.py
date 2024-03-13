@@ -2,7 +2,12 @@
 # == Installed Modules ==
 from matplotlib import pyplot as plt
 import pandas as pd
+import ast
 # == Project Modules ==
+
+
+def parse_cell(cell):
+	return ast.literal_eval(cell)
 
 
 def main():
@@ -18,7 +23,7 @@ def main():
 
 	mutation_positions = []
 	for row in mutation_df.iloc:
-		mutation_list = row.Mutation_List
+		mutation_list = parse_cell(row.Mutation_List)
 		for mutation in mutation_list:
 			mutation_positions.append(mutation[1])
 
