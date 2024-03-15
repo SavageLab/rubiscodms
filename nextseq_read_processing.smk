@@ -39,11 +39,5 @@ Mapped Output:
         """
 	threads:
 		config["threads"]
-	shell:
-		"""
-		minimap2 --MD -Lax map-pb {input.fasta_feature_path} {input.p1} > {params.sam_map} 
-		samtools view -@ {threads} -bT {input.fasta_feature_path} {params.sam_map} > {output.bam_map_path}
-		samtools sort -@ {threads} {output.bam_map_path} -o {output.sorted_bam_path}
-		samtools index -@ {threads} -b {output.sorted_bam_path}
-		rm {params.sam_map}
-		"""
+	script:
+		"py/parsextract_barcodes.py"
