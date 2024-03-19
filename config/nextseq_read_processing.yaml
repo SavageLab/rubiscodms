@@ -1,8 +1,8 @@
 #
-input_dir: ""
+input_dir_nextseq: "/groups/doudna/projects/daniel_projects/rubiscodms/input_data_nextseq/"
 
 #
-run: ""
+run_nextseq: "/groups/doudna/projects/daniel_projects/prywes_n/rubisco_nextseq_processing"
 
 #
 flankSeq: 'TTCCGTACGA'

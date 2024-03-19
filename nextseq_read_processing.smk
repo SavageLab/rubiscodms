@@ -11,33 +11,64 @@ import glob
 rule all:
 	input:
 		#
-		expand("{run}/minimap2/{experiment_id}.bam",
-			run=config["run"],experiment_id=config["experiment_id"]),
+		expand("{run}/barcodes/{file_prefix}_parsed_barcodes.csv",
+			run=config["run_nextseq"],file_prefix=config["file_prefix"]),
 
 
 rule extract_barcodes:
 	input:
-		fasta_feature_path = lambda wildcards: glob.glob("{in_dir}/{file_prefix}.fastq".format(
-			in_dir=config['input_dir'], experiment_id=wildcards.experiment_id)),
-		p1 = lambda wildcards: glob.glob("{in_dir}/{experiment_id}_pacbio.fastq".format(
-			in_dir=config['input_dir'], experiment_id=wildcards.experiment_id))
+		fastq_reads = lambda wildcards: glob.glob("{in_dir}/{file_prefix}.fastq".format(
+			in_dir=config["input_dir_nextseq"], file_prefix=wildcards.file_prefix)),
+		pacbio_barcode_path = lambda wildcards: glob.glob("{run_pacbio}/barcodes/{experiment_id}_firstPassAllBarcodes1.csv".format(
+		run_pacbio=config['run_pacbio'],experiment_id=config["experiment_id"]))
+		,
 	output:
-		bam_map_path = "{run}/minimap2/{experiment_id}.bam",
-		sorted_bam_path= "{run}/samtools/{experiment_id}_sorted.bam",
-	conda:
-		"envs/mapping.yaml"
+		barcode_path = "{run}/barcodes/{file_prefix}_parsed_barcodes.csv",
+		barcode_count_path = "{run}/barcodes/{file_prefix}_barcodeCounts.csv",
+		pacbio_merged_counts = "{run}/barcodes/{file_prefix}_pabioMerged_barcodeCounts.csv",
 	params:
-		sam_map = "{run}/minimap2/{experiment_id}.sam"
+		flanking_sequence=config["flankSeq"]
+	conda:
+		"envs/pyplot.yaml"
 	message:
 		"""
-Mapping read pairs:
-R1: {input.p1}
-Reference:
-{input.fasta_feature_path}
-Mapped Output:
-{params.sam_map}
+Extracting Barcodes from reads:
+FASTQ: {input.fastq_reads}
+Flanking Sequence: {params.flanking_sequence}
+Bracode Report:
+{output.barcode_path}
         """
-	threads:
-		config["threads"]
+	script:
+		"py/parsextract_barcodes.py"
+
+
+rule merge_barcode_reports:
+	input:
+		barcode_report_list = expand("{run}/barcodes/{file_prefix}_pabioMerged_barcodeCounts.csv".format(
+			run=config["run_nextseq"],file_prefix=config["file_prefix"])),
+	output:
+		concat_counts_path = "{run}/barcodes/master_concat_barcodes.csv",
+	conda:
+		"envs/pyplot.yaml"
+	script:
+		"py/concat_barcodes.py"
+
+rule add_biochemistry:
+	input:
+		biochem_reference_data = lambda wildcards: glob.glob("{input_dir}/biochemData061823.csv".format(
+			input_dir=config['input_dir_nextseq'])),
+		concat_counts_path = "{run}/barcodes/master_concat_barcodes.csv"
+	output:
+		labeled_barcode_count_path="{run}/barcodes/{file_prefix}_labeled_barcodeCounts.csv",
+	conda:
+		"envs/pyplot.yaml"
+	message:
+		"""
+Extracting Barcodes from reads:
+FASTQ: {input.fastq_reads}
+Flanking Sequence: {params.flanking_sequence}
+Bracode Report:
+{output.barcode_path}
+		"""
 	script:
 		"py/parsextract_barcodes.py"

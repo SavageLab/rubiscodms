@@ -12,38 +12,38 @@ rule all:
 	input:
 		#   Minimap2 alignment
 		expand("{run}/minimap2/{experiment_id}.bam",
-			run=config["run"],experiment_id=config["experiment_id"]),
+			run=config["run_pacbio"],experiment_id=config["experiment_id"]),
 		#   Extract barcodes
 		expand("{run}/barcodes/{experiment_id}_firstPassAllBarcodes1.csv",
-			run=config["run"],experiment_id=config["experiment_id"]),
+			run=config["run_pacbio"],experiment_id=config["experiment_id"]),
 		#   Plot barcodes
 		expand("{run}/figures/{experiment_id}_barcodePlot.png",
-			run=config["run"],experiment_id=config["experiment_id"]),
+			run=config["run_pacbio"],experiment_id=config["experiment_id"]),
 		#   Recover barcode reads
 		expand("{run}/samtools/{experiment_id}_sorted.bam",
-			run=config["run"],experiment_id=config["experiment_id"]),
+			run=config["run_pacbio"],experiment_id=config["experiment_id"]),
 		#   Align consensus sequences
 		expand("{run}/samtools/{experiment_id}_aligned_consensus.bam",
-			run=config["run"],experiment_id=config["experiment_id"]),
+			run=config["run_pacbio"],experiment_id=config["experiment_id"]),
 		#   Annotate mutations
 		expand("{run}/mutations/{experiment_id}_full_mutation_table.csv",
-			run=config["run"],experiment_id=config["experiment_id"]),
+			run=config["run_pacbio"],experiment_id=config["experiment_id"]),
 		#   Plot mutation-associated statistics
 		expand("{run}/mutations/{experiment_id}_mutation_statistics_table.csv",
-			run=config["run"],experiment_id=config["experiment_id"]),
+			run=config["run_pacbio"],experiment_id=config["experiment_id"]),
 		#   Conduct data rarefaction
 		expand("{run}/figures/{experiment_id}_rarefaction_plot.png",
-			run=config["run"],experiment_id=config["experiment_id"]),
+			run=config["run_pacbio"],experiment_id=config["experiment_id"]),
 		#   Plot mutation positions
 		expand("{run}/figures/{experiment_id}_mutation_positions_negative.png",
-			run=config["run"],experiment_id=config["experiment_id"]),
+			run=config["run_pacbio"],experiment_id=config["experiment_id"]),
 
 rule minimap2_map:
 	input:
 		fasta_feature_path = lambda wildcards: glob.glob("{in_dir}/{experiment_id}_index.fasta".format(
-			in_dir=config['input_dir'], experiment_id=wildcards.experiment_id)),
+			in_dir=config["input_dir_pacbio"], experiment_id=wildcards.experiment_id)),
 		p1 = lambda wildcards: glob.glob("{in_dir}/{experiment_id}_pacbio.fastq".format(
-			in_dir=config['input_dir'], experiment_id=wildcards.experiment_id))
+			in_dir=config["input_dir_pacbio"], experiment_id=wildcards.experiment_id))
 	output:
 		bam_map_path = "{run}/minimap2/{experiment_id}.bam",
 		sorted_bam_path= "{run}/samtools/{experiment_id}_sorted.bam",
@@ -74,7 +74,7 @@ Mapped Output:
 rule extract_barcodes:
 	input:
 		genbank_feature_path = lambda wildcards: glob.glob("{in_dir}/{experiment_id}_index.gb".format(
-			in_dir=config['input_dir'],
+			in_dir=config["input_dir_pacbio"],
 			experiment_id=wildcards.experiment_id)),
 		bam_map_path = "{run}/minimap2/{experiment_id}.bam"
 	output:
@@ -133,7 +133,7 @@ Export consensus FASTA sequences to:\n {output.consensus_fasta_path}
 rule align_consensus:
 	input:
 		fasta_feature_path=lambda wildcards: glob.glob("{in_dir}/{experiment_id}_index.fasta".format(
-			in_dir=config['input_dir'],experiment_id=wildcards.experiment_id)),
+			in_dir=config["input_dir_pacbio"],experiment_id=wildcards.experiment_id)),
 			consensus_fasta_path = "{run}/samtools/{experiment_id}_barcode_reads.fasta"
 	output:
 		aligned_consensus_path="{run}/samtools/{experiment_id}_aligned_consensus.bam"
