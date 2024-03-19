@@ -104,6 +104,8 @@ def main():
 	phydms_root_path = str(snakemake.params.phydms_root_path)
 	# === Outputs
 	models_summary_plot = str(snakemake.output.models_summary_plot)
+	# === Params
+	figures_path = str(snakemake.params.figures_path)
 
 	# Use phydms standard names to fetch the 'omegabysite' files
 	model_list = [('expcm', f"{phydms_root_path}_ExpCM_aa_preference_omegabysite.txt"),
@@ -127,6 +129,7 @@ def main():
 		hlines.sort()
 
 		data = pd.DataFrame({'Model': [model_list[idx][0]] * len(yvalues), 'Values': yvalues})
+		data.to_csv(f"{figures_path}/{model_list[idx][0]}_plot_data.csv")
 		sns.set_palette("colorblind")
 
 		sns.violinplot(ax=ax[idx], x='Model', y='Values', data=data)
