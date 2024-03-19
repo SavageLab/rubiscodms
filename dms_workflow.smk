@@ -171,7 +171,8 @@ rule phydms_by_model_summary:
 	output:
 		models_summary_plot = "{run}_{min_ident}/{experiment_id}/figures/{experiment_id}_summary_omegabysite.png"
 	params:
-		phydms_root_path = "{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}"
+		phydms_root_path = "{run}_{min_ident}/{experiment_id}/phydmsresults/{experiment_id}",
+		figures_path = "{run}_{min_ident}/{experiment_id}/figures/"
 	conda:
 		"envs/pyplot.yaml"
 	script:
