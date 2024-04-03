@@ -14,13 +14,16 @@ def main():
     concat_counts_path = str(snakemake.output.pacbio_merged_counts)
 
 
-    loop_report_entry = barcode_report_list[0]
+    loop_report_entry = pd.read_csv(barcode_report_list[0],index_col=0)
     for list_index in range(1, len(barcode_report_list)):
         df_pacbio_barcode = pd.read_csv(barcode_report_list[list_index], index_col=0)
+
+        loop_report_entry = loop_report_entry.merge(df_pacbio_barcode)
         loop_report_entry = pd.concat([df_pacbio_barcode, loop_report_entry])
     df_concat_barcode = loop_report_entry.convert_dtypes()
 
+    df_concat_barcode.to_csv("/groups/doudna/projects/daniel_projects/rubiscodms/test_barc.csv")
 
 
 if __name__ == "__main__":
-	main()
+    main()
