@@ -4,6 +4,7 @@ import pandas as pd
 from Bio import SeqIO
 # == Project Modules ==
 
+#TODO: On pacbioMerged_barcodeCounts.csv Fix whatever the fuck this header might be: ",Barcode,Counts,count"
 
 def parseAndExtractBC(file, flanking_sequence):
 	"""
@@ -18,7 +19,7 @@ def parseAndExtractBC(file, flanking_sequence):
 		for nuc in ['A', 'T', 'G', 'C']:
 			if flanking_sequence[position] != nuc:
 				flankSeqsOBO.append(flanking_sequence[:position] + nuc + flanking_sequence[position + 1:])
-	
+
 	fastq_records = SeqIO.parse(file, "fastq")
 	barcode_list = []
 	for readCount, rec in enumerate(fastq_records):
