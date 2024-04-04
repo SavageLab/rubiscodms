@@ -67,7 +67,7 @@ def main():
 	#
 	df_barcode_list = pd.DataFrame(parseAndExtractBC(alignment_file_path, flanking_sequence), columns=[file_prefix])
 	#
-	df_barcode_counts = pd.DataFrame(df_barcode_list[file_prefix].value_counts())
+	df_barcode_counts = pd.DataFrame(df_barcode_list[file_prefix].value_counts()).rename(columns={'count': 'Counts'})
 
 	df_barcode_counts.index.name = 'Barcode'
 	df_merged_counts = df_pacbio_barcode.merge(df_barcode_counts.rename(columns={'Counts': file_prefix}), on='Barcode', how='outer')

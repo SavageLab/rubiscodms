@@ -12,14 +12,16 @@ import glob
 rule all:
 	input:
 		#
-		expand("{run}/barcodes/{file_prefix}_parsed_barcodes.csv",
+		expand("{run}/barcodes/{file_prefix}_pacbioMerged_barcodeCounts.csv",
 			run=config["run_nextseq"],file_prefix=config["file_prefix"]),
+		expand("{run}/barcodes/master_concat_barcodes.csv",
+			run=config["run_nextseq"])
 
 rule extract_barcodes:
 	input:
 		fastq_reads = lambda wildcards: glob.glob("{in_dir}/{file_prefix}.fastq".format(
 			in_dir=config["input_dir_nextseq"], file_prefix=wildcards.file_prefix)),
-		pacbio_barcode_path = lambda wildcards: glob.glob("{run_pacbio}/barcodes/{experiment_id}_barcodeCounts.csv".format(
+		pacbio_barcode_path = lambda wildcards: glob.glob("{run_pacbio}/mutations/{experiment_id}_full_mutation_table.csv".format(
 		run_pacbio=config['run_pacbio'],experiment_id=config["experiment_id"]))
 	output:
 		barcode_path = "{run}/barcodes/{file_prefix}_parsed_barcodes.csv",
@@ -34,20 +36,26 @@ rule extract_barcodes:
 Extracting Barcodes from reads:
 FASTQ: {input.fastq_reads}
 Flanking Sequence: {params.flanking_sequence}
-Bracode Report:
-{output.barcode_path}
+Barcode Report:
+{output.pacbio_merged_counts}
         """
 	script:
 		"py/parsextract_barcodes.py"
 
 rule merge_barcode_reports:
 	input:
-		barcode_report_list = expand("{run}/barcodes/{file_prefix}_pacbioMerged_barcodeCounts.csv".format(
-			run=config["run_nextseq"],file_prefix=config["file_prefix"])),
+		barcode_report_list = expand("{{run}}/barcodes/{file_prefix}_pacbioMerged_barcodeCounts.csv",
+			file_prefix=config["file_prefix"])
 	output:
 		concat_counts_path = "{run}/barcodes/master_concat_barcodes.csv",
 	conda:
 		"envs/pyplot.yaml"
+	message:
+		"""
+		Generate the concatenated report: {output.concat_counts_path}
+		By merging the following reports:
+		{input.barcode_report_list} 
+		"""
 	script:
 		"py/concat_barcodes.py"
 
