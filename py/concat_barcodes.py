@@ -7,9 +7,9 @@ import pandas as pd
 def main():
     # === SNAKEMAKE I/O ===
     # == INPUTS
-    barcode_report_list = list(snakemake.input)
+    barcode_report_list = list(snakemake.input.barcode_report_list)
     # == OUTPUTS
-    concat_counts_path = str(snakemake.output.pacbio_merged_counts)
+    concat_counts_path = str(snakemake.output.concat_counts_path)
     # DEBUG
     # barcode_report_list = ["/groups/doudna/projects/daniel_projects/rubiscodms/rubisco_nextseq_processing/barcodes/NP_11_66_8_pacbioMerged_barcodeCounts.csv",
     #                        "/groups/doudna/projects/daniel_projects/rubiscodms/rubisco_nextseq_processing/barcodes/NP_11_66_15_pacbioMerged_barcodeCounts.csv"]

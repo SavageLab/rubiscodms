@@ -15,6 +15,8 @@ rule all:
 		expand("{run}/barcodes/{file_prefix}_pacbioMerged_barcodeCounts.csv",
 			run=config["run_nextseq"],file_prefix=config["file_prefix"]),
 		expand("{run}/barcodes/master_concat_barcodes.csv",
+			run=config["run_nextseq"]),
+		expand("{run}/result_tables/labeled_barcodeCounts.csv",
 			run=config["run_nextseq"])
 
 rule extract_barcodes:
@@ -61,20 +63,28 @@ rule merge_barcode_reports:
 
 rule add_biochemistry:
 	input:
-		biochem_reference_data = lambda wildcards: glob.glob("{input_dir}/biochemData061823.csv".format(
+		biochem_reference_path = lambda wildcards: glob.glob("{input_dir}/biochemData061823.csv".format(
 			input_dir=config['input_dir_nextseq'])),
 		concat_counts_path = "{run}/barcodes/master_concat_barcodes.csv"
 	output:
-		labeled_barcode_count_path="{run}/barcodes/{file_prefix}_labeled_barcodeCounts.csv",
+		labeled_barcode_path="{run}/result_tables/labeled_barcodeCounts.csv",
+		full_labeled_barcode_path="{run}/result_tables/full_labeled_barcodeCounts.csv",
 	conda:
 		"envs/pyplot.yaml"
 	message:
 		"""
-Extracting Barcodes from reads:
-FASTQ: {input.fastq_reads}
-Flanking Sequence: {params.flanking_sequence}
-Bracode Report:
-{output.barcode_path}
+Add biochemistry data: {input.biochem_reference_path}
+Verified and labeled barcode data: {input.concat_counts_path}
 		"""
 	script:
-		"py/parsextract_barcodes.py"
+		"py/parse_barcode_labels.py"
+
+rule visualize_sample_stats:
+	input:
+		full_labeled_barcode_path="{run}/result_tables/full_labeled_barcodeCounts.csv"
+	output:
+		sample_pie_chart = "{run}/figures/{file_prefix}_pie_chart.png"
+	conda:
+		"envs/pyplot.yaml"
+	script:
+		""
