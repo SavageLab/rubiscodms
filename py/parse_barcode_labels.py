@@ -67,7 +67,7 @@ def main():
 
 
 	df_verified_barcodes_trim.to_csv(labeled_barcode_path)
-	df_verified_barcodes.to_csv(full_labeled_barcode_path)
+	df_concat_barcode.to_csv(full_labeled_barcode_path)
 
 
 if __name__ == "__main__":

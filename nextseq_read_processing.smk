@@ -75,6 +75,9 @@ rule add_biochemistry:
 		"""
 Add biochemistry data: {input.biochem_reference_path}
 Verified and labeled barcode data: {input.concat_counts_path}
+Generate files labelled with bichemical data:
+{output.labeled_barcode_path}
+{output.full_labeled_barcode_path}
 		"""
 	script:
 		"py/parse_barcode_labels.py"
@@ -87,4 +90,4 @@ rule visualize_sample_stats:
 	conda:
 		"envs/pyplot.yaml"
 	script:
-		""
+		"py/"
