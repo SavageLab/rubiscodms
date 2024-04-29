@@ -17,7 +17,9 @@ rule all:
 		expand("{run}/barcodes/master_concat_barcodes.csv",
 			run=config["run_nextseq"]),
 		expand("{run}/result_tables/labeled_barcodeCounts.csv",
-			run=config["run_nextseq"])
+			run=config["run_nextseq"]),
+		expand("{run}/figures/{file_prefix}_pie_chart.png",
+			run=config["run_nextseq"],file_prefix=config["file_prefix"])
 
 rule extract_barcodes:
 	input:
@@ -89,5 +91,11 @@ rule visualize_sample_stats:
 		sample_pie_chart = "{run}/figures/{file_prefix}_pie_chart.png"
 	conda:
 		"envs/pyplot.yaml"
+	message:
+		"""
+Visualize Barcode data from sample: {wildcards.file_prefix}
+Import data from: {input.full_labeled_barcode_path}
+Export figure to : {output.sample_pie_chart}
+		"""
 	script:
-		"py/"
+		"py/visualize_sample_stats.py"

@@ -21,13 +21,13 @@ def main():
 	experiment = str(snakemake.wildcards.file_prefix)
 
 	#DEBUG
-	full_labeled_barcode_path = "/groups/doudna/projects/daniel_projects/rubiscodms/rubisco_nextseq_processing/result_tables/full_labeled_barcodeCounts.csv"
-
+	# full_labeled_barcode_path = "/groups/doudna/projects/daniel_projects/rubiscodms/rubisco_nextseq_processing/result_tables/toy_full_labeled_barcodeCounts.csv"
+	# experiment = 'NP_11_64_2'
 	# Load dataframe
 	full_labeled_barcode = pd.read_csv(full_labeled_barcode_path, low_memory=False)
 
 	experiment_data_dict = {}
-	experiment_data_df = full_labeled_barcode[['Barcode', experiment, 'BC_Category']].dropna()
+	experiment_data_df = full_labeled_barcode[['Barcode', experiment, 'BC_Category']].dropna(axis=0, how='all')
 
 	experiment_data_dict[experiment] = {}
 	for category in experiment_data_df['BC_Category'].unique():
@@ -39,16 +39,16 @@ def main():
 
 	#
 	fig, ax = plt.subplots(figsize=(10, 5), subplot_kw=dict(aspect="equal"))
-	wedges, texts, autotexts = ax.pie(dataForPie[experiment],
-									  autopct=lambda pct: func(pct, dataForPie[experiment]),
-									  textprops=dict(color="black"),
-									  labels=dataForPie.index,
-									  startangle=90)
+	ax.pie(dataForPie[experiment],
+		   autopct=lambda pct: func(pct, dataForPie[experiment]),
+		   textprops=dict(color="black"),
+		   labels=dataForPie.index,
+		   startangle=90)
 	plt.title(experiment + ' read breakdown')
 	print('Verified reads: ' +
 		  str(100 * (dataForPie[experiment]['Verified'] / dataForPie[experiment].sum()))[:4] + '%')
+
 	plt.savefig(sample_pie_chart_path,  format="png", dpi=300)
-	plt.show()
 
 
 if __name__ == "__main__":
