@@ -1,0 +1,8 @@
+﻿Organism,Form,Oligomeric state,kcat [s-1],KM [µM],kcat/KM [s-1/mM],Sc/o,Rate spec assay (mean; s-1) ,Identifier
+Gallionella sp.,2,L2,27.3,253,0.107905138,10,12.2,OGS68397.1
+Zetaproteobacterium,2,L2,27.7,253,0.109486166,12.5,12.7,cg1_0.2_scaffold_945_c_30
+H. marinus,2,L2,24.4,184,0.132608696,20.7,11.3,WP_029912625.1
+S. caldicuralii,2,L4,20.5,144,0.142361111,13.5,9.7,WP_074200542.1
+Unknown organism,2,L6,20,170,0.117647059,4.8,11.7,WP_052580230.1
+Zetaproteobacteria_53_45,2,L2,26.3,286,0.091958042,13.9,13.1,cg1_0.2_scaffold_4987_c_3
+A. ferrooxidans,2,L6,16.2,260,0.062307692,16.4,10.3,WP_012537012.1
