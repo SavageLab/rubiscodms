@@ -19,7 +19,9 @@ rule all:
 		expand("{run}/result_tables/labeled_barcodeCounts.csv",
 			run=config["run_nextseq"]),
 		expand("{run}/figures/{file_prefix}_pie_chart.png",
-			run=config["run_nextseq"],file_prefix=config["file_prefix"])
+			run=config["run_nextseq"],file_prefix=config["file_prefix"]),
+		expand("{run}/result_tables/enrich_parameter_sweep",
+			run=config["run_nextseq"])
 
 rule extract_barcodes:
 	input:
@@ -99,3 +101,37 @@ Export figure to : {output.sample_pie_chart}
 		"""
 	script:
 		"py/visualize_sample_stats.py"
+
+rule calculate_enrichment:
+	input:
+		labeled_barcode_path = "{run}/result_tables/labeled_barcodeCounts.csv"
+	output:
+		parameter_sweep_plot = "{run}/figures/parameter_sweep_plot.png",
+		parameter_sweep_table = "{run}/result_tables/enrich_parameter_sweep",
+	conda:
+		"envs/pyplot.yaml"
+	message:
+		"""
+Import data from: {input.labeled_barcode_path}
+Export table and figue respectively to : 
+{output.parameter_sweep_table}
+{output.parameter_sweep_plot}
+		"""
+	script:
+		"py/calculate_enrichment.py"
+
+rule bootstrap_annotate:
+	input:
+		parameter_sweep_table = "{run}/result_tables/enrich_parameter_sweep",
+	output:
+		bootstrap_data = "{run}/result_tables/bootstrap_data"
+	conda:
+		"envs/pyplot.yaml"
+	message:
+		"""
+Import data from: {input.parameter_sweep_table}
+Export table and figue to : 
+{output.bootstrap_data}
+		"""
+	script:
+		"py/bootstrap_annotate.py"
