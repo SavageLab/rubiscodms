@@ -20,7 +20,9 @@ rule all:
 			run=config["run_nextseq"]),
 		expand("{run}/figures/{file_prefix}_pie_chart.png",
 			run=config["run_nextseq"],file_prefix=config["file_prefix"]),
-		expand("{run}/result_tables/enrich_parameter_sweep",
+		expand("{run}/result_tables/enrich_parameter_sweep.csv",
+			run=config["run_nextseq"]),
+		expand("{run}/result_tables/bootstrap_data.csv",
 			run=config["run_nextseq"])
 
 rule extract_barcodes:
@@ -104,10 +106,10 @@ Export figure to : {output.sample_pie_chart}
 
 rule calculate_enrichment:
 	input:
-		labeled_barcode_path = "{run}/result_tables/labeled_barcodeCounts.csv"
+		labeled_barcode_path="{run}/result_tables/labeled_barcodeCounts.csv",
 	output:
 		parameter_sweep_plot = "{run}/figures/parameter_sweep_plot.png",
-		parameter_sweep_table = "{run}/result_tables/enrich_parameter_sweep",
+		parameter_sweep_table = "{run}/result_tables/enrich_parameter_sweep.csv"
 	conda:
 		"envs/pyplot.yaml"
 	message:
@@ -122,9 +124,9 @@ Export table and figue respectively to :
 
 rule bootstrap_annotate:
 	input:
-		parameter_sweep_table = "{run}/result_tables/enrich_parameter_sweep",
+		parameter_sweep_table = "{run}/result_tables/enrich_parameter_sweep.csv",
 	output:
-		bootstrap_data = "{run}/result_tables/bootstrap_data"
+		bootstrap_data = "{run}/result_tables/bootstrap_data.csv"
 	conda:
 		"envs/pyplot.yaml"
 	message:

@@ -93,6 +93,7 @@ def rep_pearson_corrs(df0):
 	:param df0: dataframe with enrichment values across replicates (could be at the barcode or variant level)
 	:return: numpy vector of Pearson correlations (n choose 2)
 	"""
+
 	# get a list of all pairwise combinations
 	pairwise_reps = list(itertools.combinations(df0.columns, 2))
 	# create a logical dataframe for determining valid points (pearsonr can't tolerate NaNs)
@@ -100,12 +101,29 @@ def rep_pearson_corrs(df0):
 
 	# initialize vector for Pearson corrs.
 	pearcorrs = np.zeros(len(pairwise_reps))
+
 	# iterate over all replicate pairs
 	for pind, pr in enumerate(pairwise_reps):
 		# get valid indices for which neither replicate contains a NaN
 		pair_ind = ~nan_df[pr[0]] & ~nan_df[pr[1]]
-		# compute Pearson correlation
-		pearcorrs[pind] = pearsonr(df0[pr[0]][pair_ind], df0[pr[1]][pair_ind])[0]
+
+		# filter the data to ensure no NaNs are passed to pearsonr
+		filtered_x = df0[pr[0]][pair_ind]
+		filtered_y = df0[pr[1]][pair_ind]
+
+		# Debugging statements to check the data
+		print(f"Processing pair: {pr}")
+		print(f"Filtered data for {pr[0]}: {filtered_x}")
+		print(f"Filtered data for {pr[1]}: {filtered_y}")
+		print(f"Are there NaNs in filtered_x? {np.isnan(filtered_x).any()}")
+		print(f"Are there NaNs in filtered_y? {np.isnan(filtered_y).any()}")
+
+		# Ensure no NaNs are in the filtered data
+		if not np.isnan(filtered_x).any() and not np.isnan(filtered_y).any():
+			# compute Pearson correlation
+			pearcorrs[pind] = pearsonr(filtered_x, filtered_y)[0]
+		else:
+			pearcorrs[pind] = np.nan  # Assign NaN if invalid data is found
 
 	return pearcorrs.mean()
 
