@@ -1,12 +1,13 @@
-#
+# Base directory where the input files are located
 input_dir_nextseq: "input_data_nextseq"
 
-#
+# Base directory for autput files through the pipeline execution
 run_nextseq: "rubisco_nextseq_processing"
 
 #
 flankSeq: 'TTCCGTACGA'
 
+# Sample Prefixes
 file_prefix: [
 'NP_11_64_2', 'NP_11_64_9', 'NP_11_64_11',
 'NP_11_64_12', 'NP_11_64_13', 'NP_11_64_15',

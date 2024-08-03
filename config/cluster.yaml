@@ -26,3 +26,11 @@ realignment:
 pick_barcode_reads:
   time: '60:00:00'
   cores: 1
+
+calculate_enrichment:
+  time: '60:00:00'
+  cores: 1
+
+bootstrap_annotate:
+  time: '60:00:00'
+  cores: 1
