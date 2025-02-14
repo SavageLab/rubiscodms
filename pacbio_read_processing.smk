@@ -99,7 +99,7 @@ rule barcode_plot:
 	output:
 		barcode_plot = "{run}/figures/{experiment_id}_barcodePlot.png",
 	conda:
-		"envs/data_handling.yaml"
+		"envs/pyplot.yaml"
 	message:
 		"""
 rule: barcode_plot 		
@@ -184,7 +184,7 @@ rule mutation_statistics:
 		barcode_scatter_output = "{run}/figures/{experiment_id}_mutation_scatter.png",
 		mutation_heatmap_output = "{run}/figures/{experiment_id}_mutation_heatmap.png"
 	conda:
-		"envs/data_handling.yaml"
+		"envs/pyplot.yaml"
 	message:
 		"""
 rule: mutation_statistics
@@ -222,7 +222,7 @@ rule plot_mutation_positions:
 		mutation_positions_plot = "{run}/figures/{experiment_id}_mutation_positions.png",
 		mutation_positions_negative_plot = "{run}/figures/{experiment_id}_mutation_positions_negative.png"
 	conda:
-		"envs/data_handling.yaml"
+		"envs/pyplot.yaml"
 	message:
 		"""
 rule: plot_mutation_positions		
